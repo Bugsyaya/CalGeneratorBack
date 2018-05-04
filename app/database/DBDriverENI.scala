@@ -1,9 +1,9 @@
 package database
 
 import java.sql.{Connection, DriverManager, ResultSet}
-import scala.concurrent.ExecutionContext.Implicits.global
 
-import models.UniteFormation
+import scala.concurrent.ExecutionContext.Implicits.global
+import models.{Module, UniteFormation}
 
 import scala.concurrent.Future
 import scala.util.control.NonFatal
@@ -11,10 +11,16 @@ import scala.util.control.NonFatal
 
 trait UniteFormationCollection {
 	def all: Future[Seq[UniteFormation]]
+	def byId(idUniteFormation: Int): Future[Option[UniteFormation]]
+}
+trait ModuleCollection {
+	def all: Future[Seq[Module]]
+	def byId(idModule: Int): Future[Option[Module]]
 }
 
 trait API {
 	val UniteFormationCollection: UniteFormationCollection
+	val ModuleCollection: ModuleCollection
 }
 
 case class ENIConf(
