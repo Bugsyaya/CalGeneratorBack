@@ -18,11 +18,9 @@ GET     /uniteFormations/:idUniteFormation  controllers.UniteFormationController
 GET     /modules                            controllers.ModuleController.show
 GET     /modules/:idModule                  controllers.ModuleController.byId(idModule: Int)
 
-# ModuleParUnite
-GET     /modulesParUnite                    controllers.ModuleParUniteController.show
-GET     /modulesParUnite/:id                controllers.ModuleParUniteController.byId(id: Int)
-GET     /modulesParUnite/modules/:idModule  controllers.ModuleParUniteController.byIdModule(idModule: Int)
-GET     /modulesParUnite/unites/:idUnite    controllers.ModuleParUniteController.byIdUnite(idUnite: Int)
+# Salle
+GET     /salles                             controllers.SalleController.show
+GET     /salles/:codeSalle                  controllers.SalleController.byCodeSalle(codeSalle)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)

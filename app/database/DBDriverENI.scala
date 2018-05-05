@@ -3,7 +3,7 @@ package database
 import java.sql.{Connection, DriverManager, ResultSet}
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import models.{Module, ModuleParUnite, UniteFormation}
+import models.{Module, ModuleParUnite, Salle, UniteFormation}
 
 import scala.concurrent.Future
 import scala.util.control.NonFatal
@@ -23,11 +23,16 @@ trait ModuleParUniteCollection {
 	def byIdModule(idModule: Int): Future[Seq[ModuleParUnite]]
 	def byIdUnite(idUnite: Int): Future[Seq[ModuleParUnite]]
 }
+trait SalleCollection {
+	def all: Future[Seq[Salle]]
+	def byCodeSalle(codeSalle: String): Future[Option[Salle]]
+}
 
 trait API {
 	val UniteFormationCollection: UniteFormationCollection
 	val ModuleCollection: ModuleCollection
 	val ModuleParUniteCollection: ModuleParUniteCollection
+	val SalleCollection: SalleCollection
 }
 
 case class ENIConf(
