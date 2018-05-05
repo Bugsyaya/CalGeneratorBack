@@ -5,13 +5,13 @@ import javax.inject.Inject
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import database.{DBDriverENI, ENIConf, ENIDB}
-import models.{Cours, Entreprise, UniteFormation}
+import models.{Cours, Entreprise, Formation, UniteFormation}
 import play.api.mvc.{AbstractController, ControllerComponents}
 
 import scala.concurrent.ExecutionContext
 import play.api.libs.json.Json.toJson
 
-class EntrepriseController @Inject()(cc : ControllerComponents) extends AbstractController(cc){
+class FormationController @Inject()(cc : ControllerComponents) extends AbstractController(cc){
 	val db = ENIDB(DBDriverENI(ENIConf()))
 	
 	implicit val system: ActorSystem = ActorSystem()
@@ -19,10 +19,10 @@ class EntrepriseController @Inject()(cc : ControllerComponents) extends Abstract
 	implicit val mat: ActorMaterializer = ActorMaterializer()
 	
 	def show = Action.async {
-		db.EntrepriseCollection.all.map(result => Ok(toJson[Seq[Entreprise]](result)))
+		db.FormationCollection.all.map(result => Ok(toJson[Seq[Formation]](result)))
 	}
 	
-	def byCodeEntreprise(codeEntreprise: Int) = Action.async {
-		db.EntrepriseCollection.byCodeEntreprise(codeEntreprise).map(result => Ok(toJson[Option[Entreprise]](result)))
+	def byCodeFormation(codeFormation: String) = Action.async {
+		db.FormationCollection.byCodeFormation(codeFormation).map(result => Ok(toJson[Option[Formation]](result)))
 	}
 }

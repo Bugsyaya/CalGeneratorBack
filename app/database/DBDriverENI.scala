@@ -33,7 +33,11 @@ trait CoursCollection {
 }
 trait EntrepriseCollection {
 	def all: Future[Seq[Entreprise]]
-	def byCodeEntreprise(codeEntreprise: String): Future[Option[Entreprise]]
+	def byCodeEntreprise(codeEntreprise: Int): Future[Option[Entreprise]]
+}
+trait FormationCollection {
+	def all: Future[Seq[Formation]]
+	def byCodeFormation(codeEntreprise: String): Future[Option[Formation]]
 }
 
 trait API {
@@ -43,6 +47,7 @@ trait API {
 	val SalleCollection: SalleCollection
 	val CoursCollection: CoursCollection
 	val EntrepriseCollection: EntrepriseCollection
+	val FormationCollection: FormationCollection
 }
 
 case class ENIConf(
