@@ -26,6 +26,10 @@ GET     /salles/:codeSalle                  controllers.SalleController.byCodeSa
 GET     /cours                              controllers.CoursController.show
 GET     /cours/:id                          controllers.CoursController.byId(id)
 
+# Entreprise
+GET     /entreprises                        controllers.EntrepriseController.show
+GET     /entreprises/:codeEntreprise        controllers.EntrepriseController.byCodeEntreprise(codeEntreprise)
+
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
 
