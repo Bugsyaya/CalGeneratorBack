@@ -51,4 +51,10 @@ case class ENIDB(driver: DBDriverENI) extends API {
 		
 		override def byCodeFormation(codeFormation: String): Future[Option[Formation]] = driver.query[Seq[Formation]](s"SELECT * FROM Formation WHERE codeFormation='$codeFormation'").map(_.headOption)
 	}
+	
+	val LieuCollection = new LieuCollection {
+		override def all: Future[Seq[Lieu]] = driver.query("SELECT * FROM Lieu")
+		
+		override def byCodeLieu(codeLieu: Int): Future[Option[Lieu]] = driver.query[Seq[Lieu]](s"SELECT * FROM Lieu WHERE codeLieu=$codeLieu").map(_.headOption)
+	}
 }
