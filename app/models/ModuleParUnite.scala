@@ -10,6 +10,7 @@ object ModuleParUnite {
 		Utils.results(rs){
 			case r => ModuleParUnite(
 				r.getInt("Position"),
+				r.getInt("Id"),
 				r.getInt("IdUnite"),
 				r.getInt("IdModule")
 			)}.toSeq
@@ -18,6 +19,7 @@ object ModuleParUnite {
 
 case class ModuleParUnite (
 														position: Int,
+														id: Int,
 														idUnite: Int,
 														idModule : Int
                           )
