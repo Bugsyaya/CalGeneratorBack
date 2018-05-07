@@ -17,7 +17,7 @@ object ModuleParUnite {
 }
 
 case class ModuleParUnite (
-														Position: Int,
-														IdUnite: Int,
-														IdModule : Int
+														position: Int,
+														idUnite: Int,
+														idModule : Int
                           )

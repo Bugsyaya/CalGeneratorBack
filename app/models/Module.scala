@@ -22,12 +22,12 @@ object Module {
 }
 
 case class Module (
-														Libelle: String,
-														DureeEnHeures: Int,
-														DureeEnSemaines: Int,
-														PrixPublicEnCours: Float,
-														LibelleCourt: String,
-														IdModule: Int,
-														Archiver: Boolean,
-														TypeModule: Int
+														libelle: String,
+														dureeEnHeures: Int,
+														dureeEnSemaines: Int,
+														prixPublicEnCours: Float,
+														libelleCourt: String,
+														idModule: Int,
+														archiver: Boolean,
+														typeModule: Int
                           )

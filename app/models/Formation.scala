@@ -30,20 +30,20 @@ object Formation {
 }
 
 case class Formation (
-														CodeFormation: String,
-														LibelleLong: String,
-														LibelleCourt: String,
-														DureeEnHeures: Int,
-														TauxHoraire: Float,
-														CodeTitre: String,
-														PrixPublicEnCours: Float,
-														HeuresCentre: Int,
-														HeuresStage: Int,
-														SemainesCentre: Int,
-														SemainesStage: Int,
-														DureeEnSemaines: Int,
-														Archiver: Boolean,
-														ECFaPasser: Int,
-														TypeFormation: Int,
-														CodeLieu: Int
+														codeFormation: String,
+														libelleLong: String,
+														libelleCourt: String,
+														dureeEnHeures: Int,
+														tauxHoraire: Float,
+														codeTitre: String,
+														prixPublicEnCours: Float,
+														heuresCentre: Int,
+														heuresStage: Int,
+														semainesCentre: Int,
+														semainesStage: Int,
+														dureeEnSemaines: Int,
+														archiver: Boolean,
+														eCFaPasser: Int,
+														typeFormation: Int,
+														codeLieu: Int
                           )

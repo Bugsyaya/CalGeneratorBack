@@ -17,8 +17,8 @@ object UniteParFormation {
 }
 
 case class UniteParFormation (
-														CodeFormation: String,
-														Position: Int,
-														Id: Int,
-														IdUniteFormation: Int
+														codeFormation: String,
+														position: Int,
+														id: Int,
+														idUniteFormation: Int
                           )
