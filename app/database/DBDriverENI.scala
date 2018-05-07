@@ -1,9 +1,9 @@
 package database
 
 import java.sql.{Connection, DriverManager, ResultSet}
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import models._
-
 import com.typesafe.config._
 
 import scala.concurrent.Future

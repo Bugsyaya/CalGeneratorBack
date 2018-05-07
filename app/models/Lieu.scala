@@ -36,4 +36,4 @@ case class Lieu (
 	                adresse: String,
 	                cP: Int,
 	                ville: String
-                     )
+								)

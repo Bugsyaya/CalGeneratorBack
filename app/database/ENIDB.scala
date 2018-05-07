@@ -2,6 +2,7 @@ package database
 
 import models._
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 case class ENIDB(driver: DBDriverENI) extends API {
@@ -61,8 +62,5 @@ case class ENIDB(driver: DBDriverENI) extends API {
 		override def all: Future[Seq[UniteParFormation]] = driver.query("SELECT * FROM UniteParFormation")
 	}
 
-  val ModuleParUniteCollection = new ModuleParUniteCollection {
-    override def all: Future[Seq[ModuleParUnite]] = driver.query("SELECT * FROM ModuleParUnite")
-  }
 
 }
