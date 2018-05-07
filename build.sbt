@@ -16,7 +16,7 @@ libraryDependencies ++= Seq(
   ws ,
   specs2 % Test ,
   guice,
-  "org.choco-solver" % "choco-solver" % "4.0.6",
+  "org.choco-solver" % "choco-solver" % "4.0.6"
   /*"com.microsoft.sqlserver" % "mssql-jdbc" % "6.4.0.jre8" % Test */)
 
 //libraryDependencies += "com.microsoft.sqlserver" % "mssql-jdbc" % "6.1.0.jre8" % Test
