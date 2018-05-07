@@ -20,4 +20,8 @@ class UniteFormationController @Inject()(cc : ControllerComponents) extends Abst
 	def show = Action.async {
 		db.UniteFormationCollection.all.map(result => Ok(toJson[Seq[UniteFormation]](result)))
 	}
+	
+	def byId(idUniteFormation: Int) = Action.async {
+		db.UniteFormationCollection.byId(idUniteFormation).map(result => Ok(toJson[Option[UniteFormation]](result)))
+	}
 }
