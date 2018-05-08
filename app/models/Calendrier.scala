@@ -3,10 +3,10 @@ package models
 import java.time.Instant
 
 case class Calendrier (
-                        debut: Instant,
-                        fin: Instant,
+                        periode: Periode,
                         formation: Formation,
                         lieu : Lieu,
-                        cours : Seq[Cours]
-
+                        cours : Seq[Cours],
+                        contrainteResolu : Seq[Contrainte],
+                        contrainteNonResolu : Seq[Contrainte]
                       )
