@@ -38,13 +38,6 @@ GET     /formations/:codeFormation          controllers.FormationController.byCo
 GET     /lieux                              controllers.LieuController.show
 GET     /lieux/:codeLieu                    controllers.LieuController.byCodeLieu(codeLieu: Int)
 
-# Liens entre UniteParFormation et Module
-GET     /modulesParUnites                   controllers.ModulesParUnitesController.show
-
-# Liens entre UniteFormation, Formation et ModuleParUnite
-GET     /unitesParFormations                controllers.UnitesParFormationsController.show
-
-
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)

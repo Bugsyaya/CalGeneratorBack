@@ -45,20 +45,14 @@ trait LieuCollection {
 	def byCodeLieu(codeLieu: Int): Future[Option[Lieu]]
 }
 
-trait UniteParFormationCollection {
-	def all: Future[Seq[UniteParFormation]]
-}
-
-
 trait API {
 	val UniteFormationCollection: UniteFormationCollection
-	val UniteParFormationCollection: UniteParFormationCollection
-	val FormationCollection: FormationCollection
 	val ModuleCollection: ModuleCollection
 	val ModuleParUniteCollection: ModuleParUniteCollection
 	val SalleCollection: SalleCollection
 	val CoursCollection: CoursCollection
 	val EntrepriseCollection: EntrepriseCollection
+	val FormationCollection: FormationCollection
 	val LieuCollection: LieuCollection
 }
 
