@@ -43,6 +43,10 @@ trait LieuCollection {
 	def all: Future[Seq[Lieu]]
 	def byCodeLieu(codeLieu: Int): Future[Option[Lieu]]
 }
+trait PromotionCollection {
+	def all: Future[Seq[Promotion]]
+	def byCodePromotion(codePromotion: String): Future[Option[Promotion]]
+}
 
 trait API {
 	val UniteFormationCollection: UniteFormationCollection
@@ -53,6 +57,7 @@ trait API {
 	val EntrepriseCollection: EntrepriseCollection
 	val FormationCollection: FormationCollection
 	val LieuCollection: LieuCollection
+	val PromotionCollection: PromotionCollection
 }
 
 case class ENIConf(
