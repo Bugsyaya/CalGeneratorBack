@@ -81,4 +81,16 @@ case class ENIDB(driver: DBDriverENI) extends API {
 		
 		override def byCodePlanning(codePlanning: Int): Future[Option[PlanningIndividuelFormation]] = driver.query[Seq[PlanningIndividuelFormation]](s"SELECT * FROM PlanningIndividuelFormation WHERE codePlanning=$codePlanning").map(_.headOption)
 	}
+	
+	val StagiaireParEntrepriseCollection = new StagiaireParEntrepriseCollection {
+		override def all: Future[Seq[StagiaireParEntreprise]] = driver.query("SELECT * FROM StagiaireParEntreprise")
+		
+		override def byCodeStagiaire(codeStagiaire: Int): Future[Seq[StagiaireParEntreprise]] = driver.query[Seq[StagiaireParEntreprise]](s"SELECT * FROM StagiaireParEntreprise WHERE codeStagiaire=$codeStagiaire")
+		
+		override def byCodeEntreprise(codeEntreprise: Int): Future[Seq[StagiaireParEntreprise]] = driver.query[Seq[StagiaireParEntreprise]](s"SELECT * FROM StagiaireParEntreprise WHERE codeEntreprise=$codeEntreprise")
+		
+		override def byTitreVise(titreVise: String): Future[Seq[StagiaireParEntreprise]] = driver.query[Seq[StagiaireParEntreprise]](s"SELECT * FROM StagiaireParEntreprise WHERE titreVise='$titreVise'")
+		
+		override def byCodeStagiaireAndCodeEntreprise(codeStagiaire: Int, codeEntreprise: Int): Future[Option[StagiaireParEntreprise]] = driver.query[Seq[StagiaireParEntreprise]](s"SELECT * FROM StagiaireParEntreprise WHERE codeStagiaire=$codeStagiaire AND codeEntreprise=$codeEntreprise").map(_.headOption)
+	}
 }
