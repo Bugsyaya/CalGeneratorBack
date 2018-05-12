@@ -67,6 +67,12 @@ trait StagiaireParEntrepriseCollection {
 	def byTitreVise(titreVise: String): Future[Seq[PlanningIndividuelFormation]]
 	def byCodeStagiaireAndCodeEntreprise(codeStagiaire: Int, codeEntreprise: Int): Future[Option[StagiaireParEntreprise]]
 }
+trait UniteParFormationCollection {
+	def all: Future[Seq[UniteParFormation]]
+	def byCodeFormation(codeFormation: String): Future[Seq[UniteParFormation]]
+	def byId(id: Int): Future[Seq[UniteParFormation]]
+	def byIdUniteFormation(idUniteFormation: Int): Future[Seq[UniteParFormation]]
+}
 
 trait API {
 	val UniteFormationCollection: UniteFormationCollection
@@ -82,6 +88,7 @@ trait API {
 	val TitreCollection: TitreCollection
 	val PlanningIndividuelFormationCollection: PlanningIndividuelFormationCollection
 	val StagiaireParEntrepriseCollection: StagiaireParEntrepriseCollection
+	val UniteParFormationCollection: UniteParFormationCollection
 }
 
 case class ENIConf(
