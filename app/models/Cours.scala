@@ -14,13 +14,11 @@ object Cours {
 				r.getInt("dureeReelleEnHeures"),
 				r.getString("codePromotion"),
 				r.getString("idCours"),
-				r.getFloat("prixPublicAffecte"),
 				r.getInt("idModule"),
 				r.getString("libelleCours"),
 				r.getInt("dureePrevueEnHeures"),
 				r.getBoolean("dateAdefinir"),
 				r.getString("codeSalle"),
-				r.getInt("codeFormateur"),
 				r.getInt("codeLieu")
 			)}.toSeq
 	}
@@ -32,12 +30,10 @@ case class Cours (
 	                 dureeReelleEnHeures: Int,
 	                 codePromotion: String,
 	                 idCours: String,
-	                 prixPublicAffecte: Float,
 	                 idModule: Int,
 	                 libelleCours: String,
 	                 dureePrevueEnHeures: Int,
 	                 dateAdefinir: Boolean,
 	                 codeSalle: String,
-	                 codeFormateur: Int,
 	                 codeLieu: Int
                  )
