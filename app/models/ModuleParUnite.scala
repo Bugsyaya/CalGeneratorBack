@@ -8,17 +8,18 @@ object ModuleParUnite {
 	implicit val format = Json.format[ModuleParUnite]
 	implicit def fromResultSet(rs: ResultSet): Seq[ModuleParUnite] = {
 		Utils.results(rs){
-			case r => ModuleParUnite(r.getInt("position"),
-				r.getInt("id"),
-				r.getInt("idUnite"),
-				r.getInt("idModule")
+			case r => ModuleParUnite(
+				r.getInt("Position"),
+				r.getInt("Id"),
+				r.getInt("IdUnite"),
+				r.getInt("IdModule")
 			)}.toSeq
 	}
 }
 
 case class ModuleParUnite (
-	                          position: Int,
-	                          id: Int,
-	                          idUnite: Int,
-	                          idModule: Int
+														position: Int,
+														id: Int,
+														idUnite: Int,
+														idModule : Int
                           )

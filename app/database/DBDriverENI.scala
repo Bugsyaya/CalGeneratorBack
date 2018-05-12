@@ -4,6 +4,7 @@ import java.sql.{Connection, DriverManager, ResultSet}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import models._
+import com.typesafe.config._
 
 import scala.concurrent.Future
 import scala.util.control.NonFatal
@@ -55,27 +56,27 @@ trait API {
 	val LieuCollection: LieuCollection
 }
 
-case class ENIConf(
-	                  host: String = "localhost",
-	                  port: Int = 1433,
-	                  dbName: String = "master",
-	                  login: String = "sa",
-	                  password: String = "yourStrong(!)Password"
-                  )
 
-case class DBDriverENI(conf: ENIConf) {
-	val uri = s"""jdbc:sqlserver://${conf.host}:${conf.port};databaseName=${conf.dbName};user=${conf.login};password=${conf.password};"""
-	
+case class DBDriverENI() {
+
+	val config = ConfigFactory.load()
+
+	val uri = config.getString("db.eni.url")
+	val port = config.getString("db.eni.port")
+
+	// Chargement du driver (recommandé par Oracle)
+	val driver = Class.forName(config.getString("db.eni.driver"))
+
 	lazy val sqlConn = Future.successful(DriverManager.getConnection(uri))
 	
 	lazy val defaultDB: Future[Connection] =
 		(for {
 			db <- sqlConn
 		} yield db)
-			.recoverWith { case NonFatal(ex) => Future.failed(new RuntimeException(s"MongoDb not reachable $uri", ex)) }
+			.recoverWith { case NonFatal(ex) => Future.failed(new RuntimeException(s"SQL server not reachable $uri", ex)) }
 	
 	def close(): Future[Unit] = {
-		println(s"############ Closing DB... ${conf.port} #####################")
+		println(s"############ Closing DB... ${port} #####################")
 		sqlConn.map(_.close())
 	}
 	

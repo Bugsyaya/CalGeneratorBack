@@ -8,25 +8,26 @@ object Module {
 	implicit val format = Json.format[Module]
 	implicit def fromResultSet(rs: ResultSet): Seq[Module] = {
 		Utils.results(rs){
-			case r => Module(r.getString("libelle"),
-				r.getInt("dureeEnHeures"),
-				r.getInt("dureeEnSemaines"),
-				r.getFloat("prixPublicEnCours"),
-				r.getString("libelleCourt"),
-				r.getInt("idModule"),
-				r.getBoolean("archiver"),
-				r.getInt("typeModule")
+			case r => Module(
+				r.getString("Libelle"),
+				r.getInt("DureeEnHeures"),
+				r.getInt("DureeEnSemaines"),
+				r.getFloat("PrixPublicEnCours"),
+				r.getString("LibelleCourt"),
+				r.getInt("IdModule"),
+				r.getBoolean("Archiver"),
+				r.getInt("TypeModule")
 			)}.toSeq
 	}
 }
 
 case class Module (
-	                          libelle: String,
-	                          dureeEnHeures: Int,
-	                          dureeEnSemaines: Int,
-	                          prixPublicEnCours: Float,
-	                          libelleCourt: String,
-	                          idModule: Int,
-	                          archiver: Boolean,
-	                          typeModule: Int
-                          )
+										libelle: String,
+										dureeEnHeures: Int,
+										dureeEnSemaines: Int,
+										prixPublicEnCours: Float,
+										libelleCourt: String,
+										idModule: Int,
+										archiver: Boolean,
+										typeModule: Int
+									)
