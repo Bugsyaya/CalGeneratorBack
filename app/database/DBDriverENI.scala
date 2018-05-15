@@ -43,6 +43,36 @@ trait LieuCollection {
 	def all: Future[Seq[Lieu]]
 	def byCodeLieu(codeLieu: Int): Future[Option[Lieu]]
 }
+trait PromotionCollection {
+	def all: Future[Seq[Promotion]]
+	def byCodePromotion(codePromotion: String): Future[Option[Promotion]]
+}
+trait StagiaireCollection {
+	def all: Future[Seq[Stagiaire]]
+	def byCodeStagiaire(codeStagiaire: Int): Future[Option[Stagiaire]]
+}
+trait TitreCollection {
+	def all: Future[Seq[Titre]]
+	
+	def byCodeTitre(codeTitre: String): Future[Option[Titre]]
+}
+trait PlanningIndividuelFormationCollection {
+	def all: Future[Seq[PlanningIndividuelFormation]]
+	def byCodePlanning(codePlanning: Int): Future[Option[PlanningIndividuelFormation]]
+}
+trait StagiaireParEntrepriseCollection {
+	def all: Future[Seq[StagiaireParEntreprise]]
+	def byCodeStagiaire(codeStagiaire: Int): Future[Seq[StagiaireParEntreprise]]
+	def byCodeEntreprise(codeEntreprise: Int): Future[Seq[StagiaireParEntreprise]]
+	def byTitreVise(titreVise: String): Future[Seq[StagiaireParEntreprise]]
+	def byCodeStagiaireAndCodeEntreprise(codeStagiaire: Int, codeEntreprise: Int): Future[Option[StagiaireParEntreprise]]
+}
+trait UniteParFormationCollection {
+	def all: Future[Seq[UniteParFormation]]
+	def byCodeFormation(codeFormation: String): Future[Seq[UniteParFormation]]
+	def byId(id: Int): Future[Seq[UniteParFormation]]
+	def byIdUniteFormation(idUniteFormation: Int): Future[Seq[UniteParFormation]]
+}
 
 trait API {
 	val UniteFormationCollection: UniteFormationCollection
@@ -53,6 +83,12 @@ trait API {
 	val EntrepriseCollection: EntrepriseCollection
 	val FormationCollection: FormationCollection
 	val LieuCollection: LieuCollection
+	val PromotionCollection: PromotionCollection
+	val StagiaireCollection: StagiaireCollection
+	val TitreCollection: TitreCollection
+	val PlanningIndividuelFormationCollection: PlanningIndividuelFormationCollection
+	val StagiaireParEntrepriseCollection: StagiaireParEntrepriseCollection
+	val UniteParFormationCollection: UniteParFormationCollection
 }
 
 case class ENIConf(

@@ -11,8 +11,6 @@ object Lieu {
 			case r => Lieu(
 				r.getInt("codeLieu"),
 				r.getString("libelle"),
-				r.getBoolean("archive"),
-				r.getBoolean("gestionEmargement"),
 				r.getString("debutAM"),
 				r.getString("finAM"),
 				r.getString("debutPM"),
@@ -27,8 +25,6 @@ object Lieu {
 case class Lieu (
 	                codeLieu: Int,
 	                libelle: String,
-	                archive: Boolean,
-	                gestionEmargement: Boolean,
 	                debutAM: String,
 	                finAM: String,
 	                debutPM: String,

@@ -12,8 +12,7 @@ object UniteFormation {
 				r.getInt("dureeEnHeures"),
 				r.getInt("dureeEnSemaines"),
 				r.getString("libelleCourt"),
-				r.getInt("idUniteFormation"),
-				r.getBoolean("archiver")
+				r.getInt("idUniteFormation")
 			)}.toSeq
 	}
 }
@@ -23,7 +22,6 @@ case class UniteFormation (
 	                          dureeEnHeures: Int,
 	                          dureeEnSemaines: Int,
 	                          libelleCourt: String,
-	                          idUniteFormation: Int,
-	                          archiver: Boolean
+	                          idUniteFormation: Int
                           )
 	

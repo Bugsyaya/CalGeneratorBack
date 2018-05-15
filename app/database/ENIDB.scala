@@ -57,4 +57,50 @@ case class ENIDB(driver: DBDriverENI) extends API {
 		
 		override def byCodeLieu(codeLieu: Int): Future[Option[Lieu]] = driver.query[Seq[Lieu]](s"SELECT * FROM Lieu WHERE codeLieu=$codeLieu").map(_.headOption)
 	}
+	
+	val PromotionCollection = new PromotionCollection {
+		override def all: Future[Seq[Promotion]] = driver.query("SELECT * FROM Promotion")
+		
+		override def byCodePromotion(codePromotion: String): Future[Option[Promotion]] = driver.query[Seq[Promotion]](s"SELECT * FROM Promotion WHERE codePromotion='$codePromotion'").map(_.headOption)
+	}
+	
+	val StagiaireCollection = new StagiaireCollection {
+		override def all: Future[Seq[Stagiaire]] = driver.query("SELECT * FROM Stagiaire")
+		
+		override def byCodeStagiaire(codeStagiaire: Int): Future[Option[Stagiaire]] = driver.query[Seq[Stagiaire]](s"SELECT * FROM Stagiaire WHERE codeStagiaire=$codeStagiaire").map(_.headOption)
+	}
+	
+	val TitreCollection = new TitreCollection {
+		override def all: Future[Seq[Titre]] = driver.query("SELECT * FROM Titre")
+		
+		override def byCodeTitre(codeTitre: String): Future[Option[Titre]] = driver.query[Seq[Titre]](s"SELECT * FROM Titre WHERE codeTitre='$codeTitre'").map(_.headOption)
+	}
+	
+	val PlanningIndividuelFormationCollection = new PlanningIndividuelFormationCollection {
+		override def all: Future[Seq[PlanningIndividuelFormation]] = driver.query("SELECT * FROM PlanningIndividuelFormation")
+		
+		override def byCodePlanning(codePlanning: Int): Future[Option[PlanningIndividuelFormation]] = driver.query[Seq[PlanningIndividuelFormation]](s"SELECT * FROM PlanningIndividuelFormation WHERE codePlanning=$codePlanning").map(_.headOption)
+	}
+	
+	val StagiaireParEntrepriseCollection = new StagiaireParEntrepriseCollection {
+		override def all: Future[Seq[StagiaireParEntreprise]] = driver.query("SELECT * FROM StagiaireParEntreprise")
+		
+		override def byCodeStagiaire(codeStagiaire: Int): Future[Seq[StagiaireParEntreprise]] = driver.query[Seq[StagiaireParEntreprise]](s"SELECT * FROM StagiaireParEntreprise WHERE codeStagiaire=$codeStagiaire")
+		
+		override def byCodeEntreprise(codeEntreprise: Int): Future[Seq[StagiaireParEntreprise]] = driver.query[Seq[StagiaireParEntreprise]](s"SELECT * FROM StagiaireParEntreprise WHERE codeEntreprise=$codeEntreprise")
+		
+		override def byTitreVise(titreVise: String): Future[Seq[StagiaireParEntreprise]] = driver.query[Seq[StagiaireParEntreprise]](s"SELECT * FROM StagiaireParEntreprise WHERE titreVise='$titreVise'")
+		
+		override def byCodeStagiaireAndCodeEntreprise(codeStagiaire: Int, codeEntreprise: Int): Future[Option[StagiaireParEntreprise]] = driver.query[Seq[StagiaireParEntreprise]](s"SELECT * FROM StagiaireParEntreprise WHERE codeStagiaire=$codeStagiaire AND codeEntreprise=$codeEntreprise").map(_.headOption)
+	}
+	
+	val UniteParFormationCollection = new UniteParFormationCollection {
+		override def all: Future[Seq[UniteParFormation]] = driver.query("SELECT * FROM UniteParFormation")
+		
+		override def byCodeFormation(codeFormation: String): Future[Seq[UniteParFormation]] = driver.query(s"SELECT * FROM UniteParFormation WHERE codeFromation='$codeFormation'")
+		
+		override def byId(id: Int): Future[Seq[UniteParFormation]] = driver.query(s"SELECT * FROM UniteParFormation WHERE id=$id")
+		
+		override def byIdUniteFormation(idUniteFormation: Int): Future[Seq[UniteParFormation]] = driver.query(s"SELECT * FROM UniteParFormation WHERE idUniteFormation=$idUniteFormation")
+	}
 }

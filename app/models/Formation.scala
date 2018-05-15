@@ -15,14 +15,11 @@ object Formation {
 				r.getInt("dureeEnHeures"),
 				r.getFloat("tauxHoraire"),
 				r.getString("codeTitre"),
-				r.getFloat("prixPublicEnCours"),
 				r.getInt("heuresCentre"),
 				r.getInt("heuresStage"),
 				r.getInt("semainesCentre"),
 				r.getInt("semainesStage"),
 				r.getInt("dureeEnSemaines"),
-				r.getBoolean("archiver"),
-				r.getInt("eCFaPasser"),
 				r.getInt("typeFormation"),
 				r.getInt("codeLieu")
 			)}.toSeq
@@ -36,14 +33,11 @@ case class Formation (
 	                     dureeEnHeures: Int,
 	                     tauxHoraire: Float,
 	                     codeTitre: String,
-	                     prixPublicEnCours: Float,
 	                     heuresCentre: Int,
 	                     heuresStage: Int,
 	                     semainesCentre: Int,
 	                     semainesStage: Int,
 	                     dureeEnSemaines: Int,
-	                     archiver: Boolean,
-	                     eCFaPasser: Int,
 	                     typeFormation: Int,
 	                     codeLieu: Int
                       )
