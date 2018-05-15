@@ -10,10 +10,10 @@ object Entreprise {
 		Utils.results(rs){
 			case r => Entreprise(
 				r.getInt("codeEntreprise"),
-				r.getString("codeTypeEntreprise"),
-				r.getString("codeRegion"),
-				r.getInt("codeSecteur"),
-				r.getInt("codeOrganisme"),
+				r.getString("raisonSociale"),
+				r.getString("codePostal"),
+				r.getString("ville"),
+				r.getString("email"),
 				r.getString("nomCommercial"),
 				r.getInt("siret"),
 				r.getInt("codeContactEni"),
@@ -24,10 +24,10 @@ object Entreprise {
 
 case class Entreprise (
 	                      codeEntreprise: Int,
-	                      codeTypeEntreprise: String,
-	                      codeRegion: String,
-	                      codeSecteur: Int,
-	                      codeOrganisme: Int,
+	                      raisonSociale: String,
+	                      codePostal: String,
+	                      ville: String,
+	                      email: String,
 	                      nomCommercial: String,
 	                      siret: Int,
 	                      codeContactEni: Int,
