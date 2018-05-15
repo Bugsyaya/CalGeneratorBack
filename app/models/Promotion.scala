@@ -14,9 +14,6 @@ object Promotion {
 				r.getString("debut"),
 				r.getString("fin"),
 				r.getString("codeFormation"),
-				r.getFloat("prixPublicAffecte"),
-				r.getFloat("prixPECAffecte"),
-				r.getFloat("prixFinanceAffecte"),
 				r.getInt("codeLieu")
 			)}.toSeq
 	}
@@ -28,8 +25,5 @@ case class Promotion (
 	                 debut: String,
 	                 fin: String,
 	                 codeFormation: String,
-	                 prixPublicAffecte: Float,
-	                 prixPECAffecte: Float,
-	                 prixFinanceAffecte: Float,
 	                 codeLieu: Int
                  )
