@@ -12,7 +12,6 @@ object Titre {
 				r.getString("libelleCourt"),
 				r.getString("libelleLong"),
 				r.getString("niveau"),
-				r.getString("codeAFPA"),
 				r.getString("millesime")
 			)}.toSeq
 	}
@@ -23,6 +22,5 @@ case class Titre (
 	                 libelleCourt: String,
 	                 libelleLong: String,
 	                 niveau: String,
-	                 codeAFPA: String,
 	                 millesime: String
                  )

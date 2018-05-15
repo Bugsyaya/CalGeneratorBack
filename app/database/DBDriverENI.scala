@@ -62,9 +62,9 @@ trait PlanningIndividuelFormationCollection {
 }
 trait StagiaireParEntrepriseCollection {
 	def all: Future[Seq[StagiaireParEntreprise]]
-	def byCodeStagiaire(codeStagiaire: Int): Future[Seq[PlanningIndividuelFormation]]
-	def byCodeEntreprise(codeEntreprise: Int): Future[Seq[PlanningIndividuelFormation]]
-	def byTitreVise(titreVise: String): Future[Seq[PlanningIndividuelFormation]]
+	def byCodeStagiaire(codeStagiaire: Int): Future[Seq[StagiaireParEntreprise]]
+	def byCodeEntreprise(codeEntreprise: Int): Future[Seq[StagiaireParEntreprise]]
+	def byTitreVise(titreVise: String): Future[Seq[StagiaireParEntreprise]]
 	def byCodeStagiaireAndCodeEntreprise(codeStagiaire: Int, codeEntreprise: Int): Future[Option[StagiaireParEntreprise]]
 }
 trait UniteParFormationCollection {
