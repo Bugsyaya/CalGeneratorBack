@@ -7,7 +7,7 @@ object ChocoModulesFormation {
 }
 
 case class ChocoModulesFormation (
-	                                 idModule: String,
+	                                 idModule: Int,
 	                                 prerequis: Seq[ChocoModulesFormation],
 	                                 cours: Seq[ChocoCours],
 	                                 nbSemainePrevu: Int,

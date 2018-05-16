@@ -2,6 +2,8 @@ package database
 
 import java.sql.{Connection, DriverManager, ResultSet}
 
+import helper.Utils
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import models._
 
@@ -16,6 +18,7 @@ trait UniteFormationCollection {
 trait ModuleCollection {
 	def all: Future[Seq[Module]]
 	def byId(idModule: Int): Future[Option[Module]]
+	def byDateAndFormation(debut: String, fin: String, codeFormation: String): Future[Seq[Int]]
 }
 trait ModuleParUniteCollection {
 	def all: Future[Seq[ModuleParUnite]]
@@ -30,6 +33,7 @@ trait SalleCollection {
 trait CoursCollection {
 	def all: Future[Seq[Cours]]
 	def byId(id: String): Future[Option[Cours]]
+	def byDateAndModule(debut: String, fin: String, idModule: Int): Future[Seq[String]]
 }
 trait EntrepriseCollection {
 	def all: Future[Seq[Entreprise]]
@@ -116,6 +120,14 @@ case class DBDriverENI(conf: ENIConf) {
 	}
 	
 	def query[T](query: String)(implicit imp: ResultSet => T): Future[T] = sqlConn.map(_.prepareStatement(query).executeQuery())
+	
+	def queryBasic(query: String, index: String) = {
+		sqlConn.map(_.prepareStatement(query).executeQuery()).map{rs =>
+			Utils.results(rs){
+				case r => r.getString(index)
+			}.toSeq
+		}
+	}
 }
 
 

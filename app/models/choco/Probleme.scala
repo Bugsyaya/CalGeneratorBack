@@ -9,5 +9,5 @@ object Probleme {
 case class Probleme (
 	                 periode: ChocoPeriode,
 	                 modulesFormation: Seq[ChocoModulesFormation],
-	                 contraintes: Seq[ChocoContrainte]
+	                 contraintes: Seq[ChocoContrainte] = Nil
                  )

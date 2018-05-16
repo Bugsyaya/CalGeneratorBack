@@ -16,6 +16,10 @@ case class ENIDB(driver: DBDriverENI) extends API {
 		override def all: Future[Seq[Module]] = driver.query("SELECT * FROM Module")
 		
 		override def byId(idModule: Int): Future[Option[Module]] = driver.query[Seq[Module]](s"SELECT * FROM Module WHERE idModule=$idModule").map(_.headOption)
+		
+		override def byDateAndFormation(debut: String, fin: String, codeFormation: String): Future[Seq[Int]] = {
+			driver.queryBasic(s"SELECT c.idModule FROM cours c LEFT JOIN module m ON c.IdModule = m.IdModule LEFT JOIN ModuleParUnite mpu ON m.IdModule = mpu.IdModule LEFT JOIN UniteParFormation upf ON mpu.IdUnite = upf.Id LEFT JOIN Formation f ON f.CodeFormation = upf.CodeFormation WHERE (c.Debut > '$debut' AND c.Fin < '$fin') AND f.CodeFormation ='$codeFormation' GROUP BY c.idModule", "idModule").map(_.map(_.toInt))
+		}
 	}
 	
 	val ModuleParUniteCollection = new ModuleParUniteCollection {
@@ -38,6 +42,15 @@ case class ENIDB(driver: DBDriverENI) extends API {
 		override def all: Future[Seq[Cours]] = driver.query("SELECT * FROM Cours")
 		
 		override def byId(id: String): Future[Option[Cours]] = driver.query[Seq[Cours]](s"SELECT * FROM Cours WHERE idCours='$id'").map(_.headOption)
+		
+		override def byDateAndModule(debut: String, fin: String, idModule: Int): Future[Seq[String]] = {
+			driver.queryBasic(s"""SELECT c.idCours FROM cours c
+				left join module m on c.IdModule = m.IdModule
+				left join ModuleParUnite mpu on m.IdModule = mpu.IdModule
+				left join UniteParFormation upf on mpu.IdUnite = upf.Id
+				left join Formation f on f.CodeFormation = upf.CodeFormation
+				where (c.Debut > '$debut' AND c.Fin < '$fin') AND c.idModule=$idModule GROUP BY c.idCours""", "IdCours")
+		}
 	}
 	
 	val EntrepriseCollection = new EntrepriseCollection {

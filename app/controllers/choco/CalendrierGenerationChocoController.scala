@@ -10,6 +10,7 @@ import play.api.mvc.{AbstractController, ControllerComponents, Result}
 import akka.stream.ActorMaterializer
 import database.{DBDriverENI, ENIConf, ENIDB}
 import models.Calendrier
+import models.Front.FrontCalendrier
 import play.api.libs.json.Json
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -24,19 +25,22 @@ class CalendrierGenerationChocoController @Inject()(cc : ControllerComponents) e
 	
 	def generationCalendrier = Action.async { request =>
 		request.body.asJson.map { requ =>
-			Json.fromJson[Probleme](requ).map { req =>
-				Http().singleRequest(
-					HttpRequest(
-						method = HttpMethods.GET,
-						uri = "",
-						entity = HttpEntity(ContentTypes.`application/json`, toJson[Probleme](Json.fromJson[Probleme](requ).get).toString),
-						headers = Nil
+			println(s"requ : $requ")
+			println(s"Json.fromJson[FrontCalendrier](requ) : ${Json.fromJson[FrontCalendrier](requ)}")
+			Json.fromJson[FrontCalendrier](requ).map { req =>
+				frontCalToChocoProbleme(req).map{chocoProbleme =>
+					println(s"JSON PROBLEME :\n${toJson[Probleme](chocoProbleme).toString}")
+					Http().singleRequest(
+						HttpRequest(
+							method = HttpMethods.POST,
+							uri = "http://localhost:8000/solve",
+							entity = HttpEntity(ContentTypes.`application/json`, toJson[Probleme](chocoProbleme).toString),
+							headers = Nil
+						)
 					)
-				).flatMap{res =>
-					chocoCalToCal(Json.parse(res.entity.toString).as[Seq[ChocoCalendrier]])
-				}
-//			}.getOrElse(Future.successful(InternalServerError("Ce n'est pas un probleme...")))
-			}.getOrElse(chocoCalToCal(bouchonCalendrier))
+				}.flatMap(_.flatMap(res => chocoCalToCal(Json.parse(res.entity.toString).as[Seq[ChocoCalendrier]])))
+			}.getOrElse(Future.successful(InternalServerError("Ce n'est pas un FrontCalendrier...")))
+//			}.getOrElse(chocoCalToCal(bouchonCalendrier))
 		}.getOrElse(Future.successful(NotFound("Il manque des parametres...")))
 	}
 	
@@ -55,6 +59,51 @@ class CalendrierGenerationChocoController @Inject()(cc : ControllerComponents) e
 				} yield result
 			}
 		).map(result => Ok(toJson[Seq[Calendrier]](result)))
+	}
+	
+	private def frontCalToChocoProbleme(frontCalendrier: FrontCalendrier): Future[Probleme] = {
+		val debut = frontCalendrier.periode.debut.split(" ").headOption.getOrElse(frontCalendrier.periode.debut)
+		val fin = frontCalendrier.periode.fin.split(" ").headOption.getOrElse(frontCalendrier.periode.fin)
+		
+		db.ModuleCollection.byDateAndFormation(debut, fin, frontCalendrier.codeFormation).flatMap { idsModule =>
+			Future.sequence(idsModule.map { idModule =>
+				db.ModuleCollection.byId(idModule).filter(_.isDefined).flatMap { module =>
+					db.CoursCollection.byDateAndModule(debut, fin, idModule).flatMap { idsCours =>
+						Future.sequence(idsCours.map { idCours =>
+							db.CoursCollection.byId(idCours).filter(_.isDefined).map(_.get)
+						}).map { cs =>
+							ChocoModulesFormation(
+								module.get.idModule,
+								Nil,
+								cs.map { c =>
+									ChocoCours(
+										ChocoPeriode(
+											c.debut,
+											c.fin
+										),
+										c.idCours,
+										c.idModule,
+										c.codeLieu,
+										c.dureeReelleEnHeures
+									)
+								},
+								module.get.dureeEnSemaines,
+								module.get.dureeEnHeures
+							)
+						}
+					}
+				}
+			})
+		}.map {chocoModulesFormation =>
+			Probleme(
+				ChocoPeriode(
+					debut,
+					fin
+				),
+				chocoModulesFormation,
+				Nil
+			)
+		}
 	}
 	
 	def bouchonCalendrier: Seq[ChocoCalendrier] = {
