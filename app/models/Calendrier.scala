@@ -1,6 +1,6 @@
 package models
 
-import models.choco.{ChocoContrainte, ChocoCours}
+import models.choco.ChocoContrainte
 import play.api.libs.json.Json
 
 object Calendrier {
@@ -8,7 +8,9 @@ object Calendrier {
 }
 
 case class Calendrier (
-	                           cours: Seq[Cours],
-	                           contraintesResolus: Seq[ChocoContrainte],
-	                           contrainteNonResolu: Seq[ChocoContrainte]
-                           )
+	                      idCalendrier: String,
+	                      codeFormation: String,
+	                      cours: Seq[Cours] = Seq.empty,
+	                      contraintesResolus: Seq[ChocoContrainte] = Seq.empty,
+	                      contrainteNonResolu: Seq[ChocoContrainte] = Seq.empty
+                      )

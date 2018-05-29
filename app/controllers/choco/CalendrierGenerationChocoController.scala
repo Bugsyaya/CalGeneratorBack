@@ -1,23 +1,26 @@
 package controllers.choco
 
+import java.util.UUID.randomUUID
 import javax.inject.Inject
 
+import scala.concurrent.duration._
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.{ContentTypes, HttpEntity, HttpMethods, HttpRequest}
 import models.choco._
 import play.api.mvc.{AbstractController, ControllerComponents, Result}
 import akka.stream.ActorMaterializer
-import database.{DBDriverENI, ENIConf, ENIDB}
+import database._
 import models.Calendrier
 import models.Front.FrontCalendrier
 import play.api.libs.json.Json
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{Await, ExecutionContext, Future}
 import play.api.libs.json.Json.toJson
 
 class CalendrierGenerationChocoController @Inject()(cc : ControllerComponents) extends AbstractController(cc) {
 	val db = ENIDB(DBDriverENI(ENIConf()))
+	val dbMongo = CalDB(CalConf("localhost", 27017, "CalDatabase"))
 	
 	implicit val system: ActorSystem = ActorSystem()
 	implicit val ec: ExecutionContext = system.dispatcher
@@ -25,45 +28,68 @@ class CalendrierGenerationChocoController @Inject()(cc : ControllerComponents) e
 	
 	def generationCalendrier = Action.async { request =>
 		request.body.asJson.map { requ =>
-			println(s"requ : $requ")
-			println(s"Json.fromJson[FrontCalendrier](requ) : ${Json.fromJson[FrontCalendrier](requ)}")
 			Json.fromJson[FrontCalendrier](requ).map { req =>
-				frontCalToChocoProbleme(req).map{chocoProbleme =>
-					println(s"JSON PROBLEME :\n${toJson[Probleme](chocoProbleme).toString}")
-					Http().singleRequest(
-						HttpRequest(
-							method = HttpMethods.POST,
-							uri = "http://localhost:8000/solve",
-							entity = HttpEntity(ContentTypes.`application/json`, toJson[Probleme](chocoProbleme).toString),
-							headers = Nil
-						)
-					)
-				}.flatMap(_.flatMap(res => chocoCalToCal(Json.parse(res.entity.toString).as[Seq[ChocoCalendrier]])))
+				
+				val calendrierF: Future[Seq[Calendrier]] = frontCalToChocoProbleme(req).flatMap{chocoProbleme =>
+					requestProbleme(chocoProbleme)
+						.flatMap{res =>
+						res.entity
+							.toStrict(300.millis)
+							.map( _.data.utf8String)
+							.map(Json.parse(_).as[Seq[ChocoCalendrier]])
+							.flatMap(r => chocoCalToCal(r, req.codeFormation))
+					}
+				}
+				
+				calendrierF.map(calendrier => Ok(toJson[Seq[Calendrier]](calendrier)))
 			}.getOrElse(Future.successful(InternalServerError("Ce n'est pas un FrontCalendrier...")))
-//			}.getOrElse(chocoCalToCal(bouchonCalendrier))
 		}.getOrElse(Future.successful(NotFound("Il manque des parametres...")))
 	}
 	
-	private def chocoCalToCal(chocoCalendriers: Seq[ChocoCalendrier]): Future[Result] = {
-		Future.sequence(
-			chocoCalendriers.map{chocoCalendrier =>
-				for {
-					coursFutur <- Future.sequence(
-							chocoCalendrier.cours.map { chocoCours =>
-								db.CoursCollection.byId(chocoCours.idCours)
-									.filter(_.isDefined)
-									.map(_.get)
-						}
-					)
-					result = Calendrier(coursFutur, chocoCalendrier.contraintesResolus, chocoCalendrier.contrainteNonResolu)
-				} yield result
+	private def chocoCalToCal(chocoCalendriers: Seq[ChocoCalendrier], codeFormation: String): Future[Seq[Calendrier]] = {
+		Future.sequence(chocoCalendriers.map{c =>
+			chocoCaltoCal(c, codeFormation).flatMap{cal =>
+				dbMongo.CalendrierCollection.save(cal).map { wr =>
+					if (wr.n > 0) println("C'est ok")
+					else println("C'est pas bon")
+				}.map(_ => cal)
 			}
-		).map(result => Ok(toJson[Seq[Calendrier]](result)))
+		})
+	}
+	
+	private def requestProbleme(chocoProbleme: Probleme) = {
+		Http().singleRequest(
+			HttpRequest(
+				method = HttpMethods.POST,
+				uri = "http://localhost:8000/solve",
+				entity = HttpEntity(ContentTypes.`application/json`, toJson[Probleme](chocoProbleme).toString),
+				headers = Nil
+			)
+		)
+	}
+	
+	private def chocoCaltoCal(chocoCalendrier: ChocoCalendrier, codeFormation: String): Future[Calendrier] = {
+		for {
+			coursFutur <- Future.sequence(
+				chocoCalendrier.cours.map { chocoCours =>
+					db.CoursCollection.byId(chocoCours)
+						.filter(_.isDefined)
+						.map{cou =>
+							cou.get.copy(
+								debut = cou.get.debut.split(" ").headOption.getOrElse(cou.get.debut),
+								fin = cou.get.fin.split(" ").headOption.getOrElse(cou.get.fin),
+							)
+						}
+				}
+			)
+			result = Calendrier(randomUUID().toString, codeFormation, coursFutur, chocoCalendrier.contraintesResolus, chocoCalendrier.contrainteNonResolu)
+			_ = println(s"resuuuult : $result")
+		} yield result
 	}
 	
 	private def frontCalToChocoProbleme(frontCalendrier: FrontCalendrier): Future[Probleme] = {
-		val debut = frontCalendrier.periode.debut.split(" ").headOption.getOrElse(frontCalendrier.periode.debut)
-		val fin = frontCalendrier.periode.fin.split(" ").headOption.getOrElse(frontCalendrier.periode.fin)
+		val debut = frontCalendrier.periodeFormation.debut.split(" ").headOption.getOrElse(frontCalendrier.periodeFormation.debut)
+		val fin = frontCalendrier.periodeFormation.fin.split(" ").headOption.getOrElse(frontCalendrier.periodeFormation.fin)
 		
 		db.ModuleCollection.byDateAndFormation(debut, fin, frontCalendrier.codeFormation).flatMap { idsModule =>
 			Future.sequence(idsModule.map { idModule =>
@@ -78,8 +104,8 @@ class CalendrierGenerationChocoController @Inject()(cc : ControllerComponents) e
 								cs.map { c =>
 									ChocoCours(
 										ChocoPeriode(
-											c.debut,
-											c.fin
+											c.debut.split(" ").headOption.getOrElse(c.debut),
+											c.fin.split(" ").headOption.getOrElse(c.debut)
 										),
 										c.idCours,
 										c.idModule,
@@ -101,86 +127,8 @@ class CalendrierGenerationChocoController @Inject()(cc : ControllerComponents) e
 					fin
 				),
 				chocoModulesFormation,
-				Nil
+				frontCalendrier.contraintes
 			)
 		}
-	}
-	
-	def bouchonCalendrier: Seq[ChocoCalendrier] = {
-		val cours = Seq(
-			ChocoCours(
-				ChocoPeriode(
-					"2018-03-26",
-					"2018-03-30"
-				),
-				"9ac9f5b9-be0f-418d-ac3c-00ebb8582246",
-				20,
-				11,
-				35
-			),
-			ChocoCours(
-				ChocoPeriode(
-					"2018-08-20",
-					"2018-08-24"
-				),
-				"cdf20f3c-94d4-4069-a640-00e3100fdae1",
-				541,
-				11,
-				35
-			)
-		)
-		val cours2 = Seq(
-			ChocoCours(
-				ChocoPeriode(
-					"2018-05-14",
-					"2018-05-18"
-				),
-				"86335786-9ab8-4e22-a3c1-013b753c110f",
-				822,
-				5,
-				35
-			),
-			ChocoCours(
-				ChocoPeriode(
-					"2018-07-16",
-					"2018-07-27"
-				),
-				"d18784ed-6e39-44b9-8800-012f900e76d5",
-				517,
-				2,
-				70
-			)
-		)
-		
-		val contraintesResolus = Seq(
-			ChocoContrainte(
-				dureeMaxFormation = Option(300)
-			),
-			ChocoContrainte(
-				nbHeureAnnuel = Option(150)
-			)
-		)
-		
-		val contrainteNonResolu = Seq(
-			ChocoContrainte(
-				maxSemaineFormation = Option(1)
-			),
-			ChocoContrainte(
-				maxStagiaireEntrepriseEnFormation = Option(1)
-			)
-		)
-		
-		Seq(
-			ChocoCalendrier(
-				cours,
-				contraintesResolus,
-				contrainteNonResolu
-			),
-			ChocoCalendrier(
-				cours2,
-				contrainteNonResolu,
-				contraintesResolus
-			)
-		)
 	}
 }

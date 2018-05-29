@@ -9,6 +9,6 @@ object FrontCalendrier {
 
 case class FrontCalendrier (
 	                           codeFormation: String,
-	                           periode: ChocoPeriode,
+	                           periodeFormation: ChocoPeriode,
 	                           contraintes: Seq[ChocoContrainte] = Nil
                            )

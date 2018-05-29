@@ -33,6 +33,7 @@ GET     /entreprises/:codeEntreprise        controllers.EntrepriseController.byC
 # Formation
 GET     /formations                         controllers.FormationController.show
 GET     /formations/:codeFormation          controllers.FormationController.byCodeFormation(codeFormation)
+GET     /formations/:codeFormation/modules  controllers.FormationController.moduleByCodeFormation(codeFormation)
 
 # Lieu
 GET     /lieux                              controllers.LieuController.show

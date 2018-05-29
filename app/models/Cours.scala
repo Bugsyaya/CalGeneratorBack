@@ -18,22 +18,22 @@ object Cours {
 				r.getString("libelleCours"),
 				r.getInt("dureePrevueEnHeures"),
 				r.getBoolean("dateAdefinir"),
-				r.getString("codeSalle"),
+//				r.getString("codeSalle"),
 				r.getInt("codeLieu")
 			)}.toSeq
 	}
 }
 
 case class Cours (
-	                 debut: String,
-	                 fin: String,
-	                 dureeReelleEnHeures: Int,
-	                 codePromotion: String,
-	                 idCours: String,
-	                 idModule: Int,
-	                 libelleCours: String,
-	                 dureePrevueEnHeures: Int,
-	                 dateAdefinir: Boolean,
-	                 codeSalle: String,
-	                 codeLieu: Int
+	                 debut: String = "",
+	                 fin: String = "",
+	                 dureeReelleEnHeures: Int = 0,
+	                 codePromotion: String = "",
+	                 idCours: String = "",
+	                 idModule: Int = 0,
+	                 libelleCours: String = "",
+	                 dureePrevueEnHeures: Int = 0,
+	                 dateAdefinir: Boolean = false,
+//	                 codeSalle: String = "",
+	                 codeLieu: Int = 0
                  )

@@ -42,6 +42,7 @@ trait EntrepriseCollection {
 trait FormationCollection {
 	def all: Future[Seq[Formation]]
 	def byCodeFormation(codeEntreprise: String): Future[Option[Formation]]
+	def moduleByCodeFormation(codeFormation: String): Future[Seq[String]]
 }
 trait LieuCollection {
 	def all: Future[Seq[Lieu]]

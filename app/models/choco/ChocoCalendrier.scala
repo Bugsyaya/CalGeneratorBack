@@ -7,7 +7,7 @@ object ChocoCalendrier {
 }
 
 case class ChocoCalendrier (
-	                           cours: Seq[ChocoCours],
-	                           contraintesResolus: Seq[ChocoContrainte],
-	                           contrainteNonResolu: Seq[ChocoContrainte]
+	                           contraintesResolus: Seq[ChocoContrainte] = Nil,
+	                           contrainteNonResolu: Seq[ChocoContrainte] = Nil,
+	                           cours: Seq[String]
                            )

@@ -7,7 +7,7 @@ object Probleme {
 }
 
 case class Probleme (
-	                 periode: ChocoPeriode,
+	                    periodeFormation: ChocoPeriode,
 	                 modulesFormation: Seq[ChocoModulesFormation],
 	                 contraintes: Seq[ChocoContrainte] = Nil
                  )

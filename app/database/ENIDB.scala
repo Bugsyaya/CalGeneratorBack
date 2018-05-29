@@ -18,7 +18,14 @@ case class ENIDB(driver: DBDriverENI) extends API {
 		override def byId(idModule: Int): Future[Option[Module]] = driver.query[Seq[Module]](s"SELECT * FROM Module WHERE idModule=$idModule").map(_.headOption)
 		
 		override def byDateAndFormation(debut: String, fin: String, codeFormation: String): Future[Seq[Int]] = {
-			driver.queryBasic(s"SELECT c.idModule FROM cours c LEFT JOIN module m ON c.IdModule = m.IdModule LEFT JOIN ModuleParUnite mpu ON m.IdModule = mpu.IdModule LEFT JOIN UniteParFormation upf ON mpu.IdUnite = upf.Id LEFT JOIN Formation f ON f.CodeFormation = upf.CodeFormation WHERE (c.Debut > '$debut' AND c.Fin < '$fin') AND f.CodeFormation ='$codeFormation' GROUP BY c.idModule", "idModule").map(_.map(_.toInt))
+			driver.queryBasic(s"""SELECT c.idModule
+					  FROM cours c
+					  LEFT JOIN module m ON c.IdModule = m.IdModule
+					  LEFT JOIN ModuleParUnite mpu ON m.IdModule = mpu.IdModule
+					  LEFT JOIN UniteParFormation upf ON mpu.IdUnite = upf.Id
+					  LEFT JOIN Formation f ON f.CodeFormation = upf.CodeFormation
+					  WHERE (c.Debut > '$debut' AND c.Fin < '$fin') AND f.CodeFormation ='$codeFormation'
+					  GROUP BY c.idModule""", "idModule").map(_.map(_.toInt))
 		}
 	}
 	
@@ -49,7 +56,8 @@ case class ENIDB(driver: DBDriverENI) extends API {
 				left join ModuleParUnite mpu on m.IdModule = mpu.IdModule
 				left join UniteParFormation upf on mpu.IdUnite = upf.Id
 				left join Formation f on f.CodeFormation = upf.CodeFormation
-				where (c.Debut > '$debut' AND c.Fin < '$fin') AND c.idModule=$idModule GROUP BY c.idCours""", "IdCours")
+				where (c.Debut > '$debut' AND c.Fin < '$fin') AND c.idModule=$idModule
+				GROUP BY c.idCours""", "IdCours")
 		}
 	}
 	
@@ -63,6 +71,16 @@ case class ENIDB(driver: DBDriverENI) extends API {
 		override def all: Future[Seq[Formation]] = driver.query("SELECT * FROM Formation")
 		
 		override def byCodeFormation(codeFormation: String): Future[Option[Formation]] = driver.query[Seq[Formation]](s"SELECT * FROM Formation WHERE codeFormation='$codeFormation'").map(_.headOption)
+		
+		override def moduleByCodeFormation(codeFormation: String): Future[Seq[String]] = driver.queryBasic(
+			s"""SELECT m.IdModule FROM cours c
+			   left join module m on c.IdModule = m.IdModule
+			   left join ModuleParUnite mpu on m.IdModule = mpu.IdModule
+			   left join UniteParFormation upf on mpu.IdUnite = upf.Id
+			   left join Formation f on f.CodeFormation = upf.CodeFormation
+			   where f.CodeFormation = '$codeFormation'
+			   GROUP BY m.IdModule
+			 """, "IdModule")
 	}
 	
 	val LieuCollection = new LieuCollection {
