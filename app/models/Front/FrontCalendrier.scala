@@ -1,6 +1,6 @@
 package models.Front
 
-import models.choco.{ChocoContrainte, ChocoPeriode}
+import models.choco.{ChocoConstraint, ChocoPeriod}
 import play.api.libs.json.Json
 
 object FrontCalendrier {
@@ -8,7 +8,8 @@ object FrontCalendrier {
 }
 
 case class FrontCalendrier (
-	                           codeFormation: String,
-	                           periodeFormation: ChocoPeriode,
-	                           contraintes: Seq[ChocoContrainte] = Nil
+	                           periodOfTraining: ChocoPeriod,
+	                           numberOfCalendarToFound: Option[Int] = Some(5),
+	                           idProblem: String,
+	                           codeFormation: String
                            )

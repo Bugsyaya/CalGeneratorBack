@@ -5,7 +5,7 @@ import javax.inject.Inject
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import database.{DBDriverENI, ENIConf, ENIDB}
-import models.Titre
+import models.ENI.ENITitre
 import play.api.mvc.{AbstractController, ControllerComponents}
 
 import scala.concurrent.ExecutionContext
@@ -19,10 +19,10 @@ class TitreController @Inject()(cc : ControllerComponents) extends AbstractContr
 	implicit val mat: ActorMaterializer = ActorMaterializer()
 	
 	def show = Action.async {
-		db.TitreCollection.all.map(result => Ok(toJson[Seq[Titre]](result)))
+		db.TitreCollection.all.map(result => Ok(toJson[Seq[ENITitre]](result)))
 	}
 	
 	def byCodeTitre(codeTitre: String) = Action.async {
-		db.TitreCollection.byCodeTitre(codeTitre).map(result => Ok(toJson[Option[Titre]](result)))
+		db.TitreCollection.byCodeTitre(codeTitre).map(result => Ok(toJson[Option[ENITitre]](result)))
 	}
 }

@@ -11,7 +11,7 @@ import models.choco._
 import play.api.mvc.{AbstractController, ControllerComponents, Result}
 import akka.stream.ActorMaterializer
 import database._
-import models.Calendrier
+import models.{Calendrier, ModuleFormation}
 import models.Front.FrontCalendrier
 import play.api.libs.json.Json
 
@@ -57,12 +57,12 @@ class CalendrierGenerationChocoController @Inject()(cc : ControllerComponents) e
 		})
 	}
 	
-	private def requestProbleme(chocoProbleme: Probleme) = {
+	private def requestProbleme(chocoProbleme: ChocoProbleme) = {
 		Http().singleRequest(
 			HttpRequest(
 				method = HttpMethods.POST,
 				uri = "http://localhost:8000/solve",
-				entity = HttpEntity(ContentTypes.`application/json`, toJson[Probleme](chocoProbleme).toString),
+				entity = HttpEntity(ContentTypes.`application/json`, toJson[ChocoProbleme](chocoProbleme).toString),
 				headers = Nil
 			)
 		)
@@ -87,47 +87,68 @@ class CalendrierGenerationChocoController @Inject()(cc : ControllerComponents) e
 		} yield result
 	}
 	
-	private def frontCalToChocoProbleme(frontCalendrier: FrontCalendrier): Future[Probleme] = {
-		val debut = frontCalendrier.periodeFormation.debut.split(" ").headOption.getOrElse(frontCalendrier.periodeFormation.debut)
-		val fin = frontCalendrier.periodeFormation.fin.split(" ").headOption.getOrElse(frontCalendrier.periodeFormation.fin)
+	private def frontCalToChocoProbleme(frontCalendrier: FrontCalendrier): Future[ChocoProbleme] = {
+		val debut = frontCalendrier.periodOfTraining.start.split(" ").headOption.getOrElse(frontCalendrier.periodOfTraining.start)
+		val fin = frontCalendrier.periodOfTraining.end.split(" ").headOption.getOrElse(frontCalendrier.periodOfTraining.end)
 		
 		db.ModuleCollection.byDateAndFormation(debut, fin, frontCalendrier.codeFormation).flatMap { idsModule =>
 			Future.sequence(idsModule.map { idModule =>
-				db.ModuleCollection.byId(idModule).filter(_.isDefined).flatMap { module =>
-					db.CoursCollection.byDateAndModule(debut, fin, idModule).flatMap { idsCours =>
-						Future.sequence(idsCours.map { idCours =>
+				db.ModuleCollection.byId(idModule)
+					.filter(_.isDefined)
+					.flatMap { module =>
+						db.CoursCollection.byDateAndModule(debut, fin, idModule).flatMap { idsCours =>
+							Future.sequence(idsCours.map { idCours =>
 							db.CoursCollection.byId(idCours).filter(_.isDefined).map(_.get)
-						}).map { cs =>
-							ChocoModulesFormation(
-								module.get.idModule,
-								Nil,
-								cs.map { c =>
-									ChocoCours(
-										ChocoPeriode(
-											c.debut.split(" ").headOption.getOrElse(c.debut),
-											c.fin.split(" ").headOption.getOrElse(c.debut)
-										),
-										c.idCours,
-										c.idModule,
-										c.codeLieu,
-										c.dureeReelleEnHeures
-									)
-								},
-								module.get.dureeEnSemaines,
-								module.get.dureeEnHeures
-							)
+						}).flatMap{ cs =>
+							
+							val moduleFormationF: Future[ModuleFormation] = dbMongo.ProblemCollection.byId(frontCalendrier.idProblem).flatMap{optProbleme =>
+								optProbleme.map{probleme =>
+									probleme.idModuleFormation.map{idFormation =>
+										dbMongo.ModuleFormationCollection.byId(idFormation).map(mod => mod.get)
+									}.get
+								}.get
+							}
+							
+							moduleFormationF.flatMap{moduleFormation =>
+								Future.sequence(moduleFormation.chocoModule.map{chocoM =>
+									Future.successful(dbMongo.ModuleContrainteCollection.byId(chocoM).map(_.get))
+								}.map(g => g.flatMap(cm => cm)))
+							}
+//
+//							ChocoModule(
+//								module.get.idModule,
+//								module.get.dureeEnSemaines,
+//								module.get.dureeEnHeures,
+//
+//							)
+//							ChocoModule(
+//								module.get.idModule,
+//								Nil,
+//								cs.map { c =>
+//									ChocoCours(
+//										ChocoPeriod(
+//											c.debut.split(" ").headOption.getOrElse(c.debut),
+//											c.fin.split(" ").headOption.getOrElse(c.debut)
+//										),
+//										c.idCours,
+//										c.idModule,
+//										c.codeLieu,
+//										c.dureeReelleEnHeures
+//									)
+//								},
+//								module.get.dureeEnSemaines,
+//								module.get.dureeEnHeures
+//							)
 						}
 					}
 				}
 			})
 		}.map {chocoModulesFormation =>
-			Probleme(
-				ChocoPeriode(
-					debut,
-					fin
-				),
-				chocoModulesFormation,
-				frontCalendrier.contraintes
+			ChocoProbleme(
+				periodOfTrainning = Some(ChocoPeriod(debut, fin)),
+				frontCalendrier.numberOfCalendarToFound.getOrElse(5),
+				None,
+				chocoModulesFormation.flatMap(p => p)
 			)
 		}
 	}

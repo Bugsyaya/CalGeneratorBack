@@ -5,6 +5,7 @@ import javax.inject.Inject
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import database.{DBDriverENI, ENIConf, ENIDB}
+import models.ENI.{ENIFormation, ENIModule}
 import models._
 import play.api.mvc.{AbstractController, ControllerComponents}
 
@@ -19,11 +20,11 @@ class FormationController @Inject()(cc : ControllerComponents) extends AbstractC
 	implicit val mat: ActorMaterializer = ActorMaterializer()
 	
 	def show = Action.async {
-		db.FormationCollection.all.map(result => Ok(toJson[Seq[Formation]](result)))
+		db.FormationCollection.all.map(result => Ok(toJson[Seq[ENIFormation]](result)))
 	}
 	
 	def byCodeFormation(codeFormation: String) = Action.async {
-		db.FormationCollection.byCodeFormation(codeFormation).map(result => Ok(toJson[Option[Formation]](result)))
+		db.FormationCollection.byCodeFormation(codeFormation).map(result => Ok(toJson[Option[ENIFormation]](result)))
 	}
 	
 	def moduleByCodeFormation(codeFormation: String) = Action.async {
@@ -32,7 +33,7 @@ class FormationController @Inject()(cc : ControllerComponents) extends AbstractC
 				db.ModuleCollection.byId(module.toInt)
 					.filter(_.isDefined)
 					.map(_.get)
-			}).map(m => Ok(toJson[Seq[Module]](m)))
+			}).map(m => Ok(toJson[Seq[ENIModule]](m)))
 		}
 	}
 }

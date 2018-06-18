@@ -1,21 +1,22 @@
-package models
+package models.ENI
 
 import java.sql.ResultSet
+
 import helper._
 import play.api.libs.json.Json
 
-object StagiaireParEntreprise {
-	implicit val format = Json.format[StagiaireParEntreprise]
-	implicit def fromResultSet(rs: ResultSet): Seq[StagiaireParEntreprise] = {
+object ENIStagiaireParEntreprise {
+	implicit val format = Json.format[ENIStagiaireParEntreprise]
+	implicit def fromResultSet(rs: ResultSet): Seq[ENIStagiaireParEntreprise] = {
 		Utils.results(rs){
-			case r => StagiaireParEntreprise(r.getString("CodeStagiaire"),
+			case r => ENIStagiaireParEntreprise(r.getString("CodeStagiaire"),
 				r.getInt("CodeEntreprise"),
 				r.getString("titreVise")
 			)}.toSeq
 	}
 }
 
-case class StagiaireParEntreprise (
+case class ENIStagiaireParEntreprise(
 	                                  codeStagiaire: String,
 	                                  codeEntreprise: Int,
 	                                  titreVise: String

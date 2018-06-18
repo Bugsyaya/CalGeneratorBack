@@ -1,14 +1,15 @@
-package models
+package models.ENI
 
 import java.sql.ResultSet
+
 import helper._
 import play.api.libs.json.Json
 
-object Promotion {
-	implicit val format = Json.format[Promotion]
-	implicit def fromResultSet(rs: ResultSet): Seq[Promotion] = {
+object ENIPromotion {
+	implicit val format = Json.format[ENIPromotion]
+	implicit def fromResultSet(rs: ResultSet): Seq[ENIPromotion] = {
 		Utils.results(rs){
-			case r => Promotion(
+			case r => ENIPromotion(
 				r.getString("codePromotion"),
 				r.getString("libelle"),
 				r.getString("debut"),
@@ -19,7 +20,7 @@ object Promotion {
 	}
 }
 
-case class Promotion (
+case class ENIPromotion(
 	                 codePromotion: String,
 	                 libelle: String,
 	                 debut: String,
