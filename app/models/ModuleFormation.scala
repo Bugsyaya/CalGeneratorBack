@@ -8,9 +8,9 @@ object ModuleFormation {
 }
 
 case class ModuleFormation(
-	                      idModuleFormation: String,
+	                      idModuleFormation: Option[String] = None,
 	                      codeFormation: String,
-	                      titre: String,
+	                      titre: Option[String] = None,
 	                      description: Option[String] = None,
-	                      chocoModule: Seq[Int] = Seq.empty
+	                      chocoModule: Option[Seq[Int]] = None
                       )

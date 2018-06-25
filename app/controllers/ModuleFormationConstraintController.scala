@@ -1,5 +1,6 @@
 package controllers
 
+import java.util.UUID
 import javax.inject.Inject
 
 import akka.actor.ActorSystem
@@ -22,10 +23,20 @@ class ModuleFormationConstraintController @Inject()(cc : ControllerComponents) e
 	def create = Action.async { request =>
 		request.body.asJson.map { requ =>
 			Json.fromJson[ModuleFormation](requ).map { req =>
-				dbMongo.ModuleFormationCollection.save(req).map{wr =>
-					if (wr.n > 0) Ok("Bien enregistré")
-					else InternalServerError("Une erreur est survenue")
+				db.FormationCollection.moduleByCodeFormation(req.codeFormation).flatMap{idModules =>
+					val moduleFormation = ModuleFormation(
+						Some(UUID.randomUUID().toString),
+						req.codeFormation,
+						req.titre,
+						req.description,
+						Some(idModules.map(_.toInt))
+					)
+					dbMongo.ModuleFormationCollection.save(moduleFormation).map{wr =>
+						if (wr.n > 0) Ok(Json.toJson[ModuleFormation](moduleFormation))
+						else InternalServerError("Une erreur est survenue")
+					}
 				}
+				
 			}.getOrElse(Future.successful(InternalServerError("Ce n'est pas un ModuleFormation...")))
 		}.getOrElse(Future.successful(NotFound("Il manque des parametres...")))
 	}

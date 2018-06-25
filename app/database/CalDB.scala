@@ -1,7 +1,9 @@
 package database
 
+import models.Front.FrontProblem
 import models.choco.{ChocoConstraint, ChocoModule}
-import models.{Calendrier, ModuleFormation, Problem}
+import models.database.{Constraint, ConstraintModule}
+import models.{Calendrier, ModuleFormation}
 import play.api.libs.json.{JsNumber, JsObject, JsString, JsValue}
 import reactivemongo.api._
 import reactivemongo.api.commands.WriteResult
@@ -87,26 +89,26 @@ case class CalDB(conf: CalConf) extends APICal{
 						throw new RuntimeException("db not reachable")
 				}
 		
-		override def create(problem: Problem): Future[WriteResult] =
+		override def create(problem: FrontProblem): Future[WriteResult] =
 			for {
 				collection <- collectionProblem
-				created <- collection.insert[Problem](problem)
+				created <- collection.insert[FrontProblem](problem)
 			} yield created
 		
-		override def update(problem: Problem) : Future[WriteResult] =
+		override def update(problem: FrontProblem) : Future[WriteResult] =
 			for {
 				collection <- collectionProblem
-				update <- collection.update(JsObject(Seq("formationId" -> JsString(problem.idProblem))), problem)
+				update <- collection.update(JsObject(Seq("formationId" -> JsString(problem.idProblem.getOrElse("")))), problem)
 			} yield update
 		
-		override def byId(idProblem: String): Future[Option[Problem]] =
+		override def byId(idProblem: String): Future[Option[FrontProblem]] =
 			for {
 				collection <- collectionProblem
-				result <- collection.find[JsObject](JsObject(Seq("idProblem" -> JsString(idProblem)))).one[Problem]
+				result <- collection.find[JsObject](JsObject(Seq("idProblem" -> JsString(idProblem)))).one[FrontProblem]
 			} yield result
 	}
 	
-	val ModuleContrainteCollection = new ModuleContrainteCollection {
+	val ConstraintModuleCollection = new ConstraintModuleCollection {
 		private def collectionModuleContrainte: Future[JSONCollection] =
 			defaultDB
 				.map(_.collection[JSONCollection]("moduleContrainte"))
@@ -115,21 +117,58 @@ case class CalDB(conf: CalConf) extends APICal{
 						throw new RuntimeException("db not reachable")
 				}
 		
-		override def save(chocoModules: Seq[ChocoModule]): Future[Seq[WriteResult]] =
+		override def save(chocoModules: Seq[ConstraintModule]): Future[Seq[WriteResult]] =
 			for {
 				collection <- collectionModuleContrainte
-				created <- Future.sequence(chocoModules.map(chocoModule => collection.insert[ChocoModule](chocoModule)))
+				created <- Future.sequence(chocoModules.map(chocoModule => collection.insert[ConstraintModule](chocoModule)))
 			} yield created
 		
-		def byId(idModule: Int): Future[Option[ChocoModule]] =
+		override def byId(chocoModuleId: Int): Future[Option[ConstraintModule]] =
 			for {
 				collection <- collectionModuleContrainte
-				result <- collection.find(JsObject(Seq("formationId" -> JsNumber(idModule)))).one[ChocoModule]
+				result <- collection.find(JsObject(Seq("idModule" -> JsNumber(chocoModuleId)))).one[ConstraintModule]
+			} yield result
+		
+		def byIdAndFormation(idModule: Int, codeFormation: String): Future[Option[ConstraintModule]] =
+			for {
+				collection <- collectionModuleContrainte
+				result <- collection.find(JsObject(Seq("idModule" -> JsNumber(idModule), "codeFormation" -> JsString(codeFormation)))).one[ConstraintModule]
+			} yield result
+	}
+	
+	val ConstraintCollection = new ConstraintCollection {
+		private def constraintCollection: Future[JSONCollection] =
+			defaultDB
+				.map(_.collection[JSONCollection]("contraint"))
+				.recover {
+					case e: Exception =>
+						throw new RuntimeException("db not reachable")
+				}
+		
+		override def create(constraint: Constraint): Future[WriteResult] =
+			for {
+				collection <- constraintCollection
+				created <- collection.insert[Constraint](constraint)
+			} yield created
+		
+		override def byId(constraintId: String): Future[Option[Constraint]] =
+			for {
+				collection <- constraintCollection
+				result <- collection.find(JsObject(Seq("idConstraint" -> JsString(constraintId)))).one[Constraint]
+			} yield result
+		
+		override def all: Future[Seq[Constraint]] =
+			for {
+				collection <- constraintCollection
+				result <- collection
+					.find[JsObject](JsObject(Seq.empty[(String, JsValue)]))
+					.cursor[Constraint]()
+					.collect[Seq]()
 			} yield result
 	}
 	
 	val ChocoConstraintCollection = new ChocoConstraintCollection {
-		private def collectionModuleContrainte: Future[JSONCollection] =
+		private def collectionContrainte: Future[JSONCollection] =
 			defaultDB
 				.map(_.collection[JSONCollection]("contraint"))
 				.recover {
@@ -139,8 +178,14 @@ case class CalDB(conf: CalConf) extends APICal{
 		
 		override def create(chocoConstraint: ChocoConstraint): Future[WriteResult] =
 			for {
-				collection <- collectionModuleContrainte
+				collection <- collectionContrainte
 				created <- collection.insert[ChocoConstraint](chocoConstraint)
 			} yield created
+		
+		override def byId(chocoConstraintId: String): Future[Option[ChocoConstraint]] =
+			for {
+				collection <- collectionContrainte
+				find <- collection.find(JsObject(Seq("idConstraint" -> JsString(chocoConstraintId)))).one[ChocoConstraint]
+			} yield find
 	}
 }

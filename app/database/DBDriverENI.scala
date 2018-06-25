@@ -35,6 +35,7 @@ trait CoursCollection {
 	def all: Future[Seq[ENICours]]
 	def byId(id: String): Future[Option[ENICours]]
 	def byDateAndModule(debut: String, fin: String, idModule: Int): Future[Seq[String]]
+	def byModule(idModule: Int): Future[Seq[String]]
 }
 trait EntrepriseCollection {
 	def all: Future[Seq[ENIEntreprise]]

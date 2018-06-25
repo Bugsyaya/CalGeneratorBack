@@ -60,6 +60,10 @@ case class ENIDB(driver: DBDriverENI) extends API {
 				where (c.Debut > '$debut' AND c.Fin < '$fin') AND c.idModule=$idModule
 				GROUP BY c.idCours""", "IdCours")
 		}
+		
+		override def byModule(idModule: Int): Future[Seq[String]] = {
+			driver.queryBasic(s"""SELECT idCours FROM cours WHERE IdModule = $idModule""", "idCours")
+		}
 	}
 	
 	val EntrepriseCollection = new EntrepriseCollection {

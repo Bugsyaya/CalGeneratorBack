@@ -7,8 +7,8 @@ object ChocoProbleme {
 }
 
 case class ChocoProbleme(
-	                    periodOfTrainning: Option[ChocoPeriod] = None,
-	                    numberOfCalendarToFound: Int = 5,
+	                    periodOfTrainning: ChocoPeriod,
+	                    numberOfCalendarToFound: Int,
 	                    constraints: Option[ChocoConstraint] = None,
 	                    moduleOfTraining: Seq[ChocoModule] = Seq.empty
                  )

@@ -3,7 +3,7 @@ package models.choco
 import play.api.libs.json.Json
 
 object ChocoConstraintPriorityBoolean {
-	implicit val format = Json.using[Json.WithDefaultValues].format[ChocoConstraintPriorityBoolean]
+	implicit val format = Json.format[ChocoConstraintPriorityBoolean]
 }
 
 case class ChocoConstraintPriorityBoolean(

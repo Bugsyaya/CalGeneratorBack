@@ -2,34 +2,31 @@
 # Routes
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
-
-# An example controller showing a sample home page
+#
+## An example controller showing a sample home page
 GET     /                                   controllers.HomeController.index
-# An example controller showing how to use dependency injection
+## An example controller showing how to use dependency injection
 GET     /count                              controllers.CountController.count
-# An example controller showing how to write asynchronous code
+## An example controller showing how to write asynchronous code
 GET     /message                            controllers.AsyncController.message
 
-# UniteFormation
-GET     /uniteFormations                    controllers.UniteFormationController.show
-GET     /uniteFormations/:idUniteFormation  controllers.UniteFormationController.byId(idUniteFormation: Int)
+# CalendrierGenerationChoco
+#POST    /generationCal                      controllers.choco.CalendrierGenerationChocoController.generationCalendrier
 
-# Module
-GET     /modules                            controllers.ModuleController.show
-GET     /modules/:idModule                  controllers.ModuleController.byId(idModule: Int)
-
-# Salle
-GET     /salles                             controllers.SalleController.show
-GET     /salles/:codeSalle                  controllers.SalleController.byCodeSalle(codeSalle)
+# Constraints
+GET     /constraints/:idConstraint           controllers.ContrainteController.byId(idConstraint)
+GET     /constraints                         controllers.ContrainteController.all
+POST    /constraints                         controllers.ContrainteController.create
 
 # Cours
 GET     /cours                              controllers.CoursController.show
 GET     /cours/:id                          controllers.CoursController.byId(id)
-# Entreprise
+
+# Entreprises
 GET     /entreprises                        controllers.EntrepriseController.show
 GET     /entreprises/:codeEntreprise        controllers.EntrepriseController.byCodeEntreprise(codeEntreprise: Int)
 
-# Formation
+# Formations
 GET     /formations                         controllers.FormationController.show
 GET     /formations/:codeFormation          controllers.FormationController.byCodeFormation(codeFormation)
 GET     /formations/:codeFormation/modules  controllers.FormationController.moduleByCodeFormation(codeFormation)
@@ -38,30 +35,35 @@ GET     /formations/:codeFormation/modules  controllers.FormationController.modu
 GET     /lieux                              controllers.LieuController.show
 GET     /lieux/:codeLieu                    controllers.LieuController.byCodeLieu(codeLieu: Int)
 
-# Promotion
+# Module
+GET     /modules                            controllers.ModuleController.show
+GET     /modules/:idModule                  controllers.ModuleController.byId(idModule: Int)
+
+# ModulesConstraints
+POST    /modulesConstraints                  controllers.ModuleContrainteController.save
+
+# ModulesFormations
+POST    /modulesFormations                   controllers.ModuleFormationConstraintController.create
+
+# Promotions
 GET     /promotions                         controllers.PromotionController.show
 GET     /promotions/:codePromotion          controllers.PromotionController.byCodePromotion(codePromotion)
 
-# Stagiaire
+# Salles
+GET     /salles                             controllers.SalleController.show
+GET     /salles/:codeSalle                  controllers.SalleController.byCodeSalle(codeSalle)
+
+# Stagiaires
 GET     /stagiaires                         controllers.StagiaireController.show
 GET     /stagiaires/:codeStagiaire          controllers.StagiaireController.byCodeStagiaire(codeStagiaire: Int)
 
-# Titre
+# Titres
 GET     /titres                             controllers.TitreController.show
 GET     /titres/:codeTitre                  controllers.TitreController.byCodeTitre(codeTitre)
 
-# Constraint
-POST    /constraint                         controllers.ContrainteController.create
-
-# ModuleConstraint
-POST    /moduleConstraint                    controllers.ModuleContrainteController.save
-
-# ModuleFormation
-POST    /moduleFormation                    controllers.ModuleFormationConstraintController.create
-
-# CalendrierGenerationChoco
-POST    /generationCal                      controllers.choco.CalendrierGenerationChocoController.generationCalendrier
-
+# UnitesFormations
+GET     /uniteFormations                    controllers.UniteFormationController.show
+GET     /uniteFormations/:idUniteFormation  controllers.UniteFormationController.byId(idUniteFormation: Int)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)

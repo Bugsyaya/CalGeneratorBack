@@ -1,7 +1,9 @@
 package database
 
+import models.Front.FrontProblem
 import models.choco.{ChocoConstraint, ChocoModule}
-import models.{Calendrier, ModuleFormation, Problem}
+import models.database.{Constraint, ConstraintModule}
+import models.{Calendrier, ModuleFormation}
 import reactivemongo.api.commands.WriteResult
 
 import scala.concurrent.Future
@@ -16,30 +18,39 @@ trait ModuleFormationCollection {
 	def byId(idModuleFormation: String): Future[Option[ModuleFormation]]
 }
 
-trait ModuleContrainteCollection {
-	def save(chocoModules: Seq[ChocoModule]): Future[Seq[WriteResult]]
+trait ConstraintModuleCollection {
+	def save(chocoModules: Seq[ConstraintModule]): Future[Seq[WriteResult]]
 	
 //	def byId(idModule: String): Future[Option[ChocoModule]]
 	
-	def byId(chocoModuleId: Int): Future[Option[ChocoModule]]
+	def byId(chocoModuleId: Int): Future[Option[ConstraintModule]]
 }
 
 trait ProblemCollection {
+	def create(problem: FrontProblem): Future[WriteResult]
 	
-	def create(problem: Problem): Future[WriteResult]
+	def update(problem: FrontProblem): Future[WriteResult]
 	
-	def update(problem: Problem): Future[WriteResult]
-	def byId(idProblem: String): Future[Option[Problem]]
+	def byId(idProblem: String): Future[Option[FrontProblem]]
 }
 
-trait ChocoModuleCollection {
-	
-	def create(chocoModule: ChocoModule): Future[WriteResult]
-}
+//trait ConstraintModuleCollection {
+//	def create(chocoModule: ConstraintModule): Future[WriteResult]
+//}
 
 trait ChocoConstraintCollection {
-	
 	def create(chocoConstraint: ChocoConstraint): Future[WriteResult]
+	
+	def byId(chocoConstraintId: String): Future[Option[ChocoConstraint]]
+}
+
+
+trait ConstraintCollection {
+	def create(constraint: Constraint): Future[WriteResult]
+	
+	def byId(constraintId: String): Future[Option[Constraint]]
+	
+	def all: Future[Seq[Constraint]]
 }
 
 trait APICal {
@@ -51,9 +62,11 @@ trait APICal {
 	
 	val ProblemCollection: ProblemCollection
 	
-	val ModuleContrainteCollection: ModuleContrainteCollection
+	val ConstraintModuleCollection: ConstraintModuleCollection
 	
 	val ChocoConstraintCollection: ChocoConstraintCollection
+	
+	val ConstraintCollection: ConstraintCollection
 	
 	//	val ChocoModuleCollection: ChocoModuleCollection
 }

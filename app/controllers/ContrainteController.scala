@@ -7,6 +7,7 @@ import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import database._
 import models.choco.ChocoConstraint
+import models.database.Constraint
 import play.api.libs.json.Json
 import play.api.mvc.{AbstractController, ControllerComponents}
 
@@ -25,12 +26,38 @@ class ContrainteController @Inject()(cc : ControllerComponents) extends Abstract
 			println(response)
 			println(Json.fromJson[ChocoConstraint](response))
 			Json.fromJson[ChocoConstraint](response).map{chocoContrainte =>
-				val cc = chocoContrainte.copy(idConstraint = Some(UUID.randomUUID().toString))
-				dbMongo.ChocoConstraintCollection.create(cc).map{wr =>
-					if(wr.n > 0) Ok("C'est enregistré")
+				val cc = Constraint(
+					UUID.randomUUID().toString,
+					chocoContrainte.place,
+					chocoContrainte.annualNumberOfHour,
+					chocoContrainte.maxDurationOfTraining,
+					chocoContrainte.trainingFrequency,
+					chocoContrainte.maxStudentInTraining,
+					chocoContrainte.listStudentRequired,
+					chocoContrainte.listPeriodeOfTrainingExclusion,
+					chocoContrainte.listPeriodeOfTrainingInclusion,
+					chocoContrainte.prerequisModule
+				)
+
+				dbMongo.ConstraintCollection.create(cc).map{wr =>
+					if(wr.n > 0) Ok(Json.toJson[Constraint](cc))
 					else InternalServerError("Il y a eu une erreur")
 				}
 			}.getOrElse(Future.successful(BadRequest("Il manque des param")))
 		}.getOrElse(Future.successful(BadRequest("Y a un pb")))
+	}
+	
+	def byId(idConstraint: String) = Action.async{
+		dbMongo.ConstraintCollection.byId(idConstraint).map{constraintOpt =>
+			constraintOpt.map{constraint =>
+				Ok(Json.toJson[Constraint](constraint))
+			}.getOrElse(Ok("Not found"))
+		}
+	}
+	
+	def all = Action.async{
+		dbMongo.ConstraintCollection.all.map{constraints =>
+			Ok(Json.toJson[Seq[Constraint]](constraints))
+		}
 	}
 }
