@@ -2,7 +2,7 @@ package database
 
 import models.Front.FrontProblem
 import models.choco.{ChocoConstraint, ChocoModule}
-import models.database.{Constraint, ConstraintModule}
+import models.database.{Constraint, ConstraintModule, ForChocoModule}
 import models.{Calendrier, ModuleFormation}
 import play.api.libs.json.{JsNumber, JsObject, JsString, JsValue}
 import reactivemongo.api._
@@ -186,6 +186,34 @@ case class CalDB(conf: CalConf) extends APICal{
 			for {
 				collection <- collectionContrainte
 				find <- collection.find(JsObject(Seq("idConstraint" -> JsString(chocoConstraintId)))).one[ChocoConstraint]
+			} yield find
+	}
+	
+	val ForChocoModule = new ForChocModule {
+		private def collectionContrainte: Future[JSONCollection] =
+			defaultDB
+				.map(_.collection[JSONCollection]("contraint"))
+				.recover {
+					case e: Exception =>
+						throw new RuntimeException("db not reachable")
+				}
+		
+		override def save(forChocoModule: ForChocoModule): Future[WriteResult] =
+			for {
+				collection <- collectionContrainte
+				created <- collection.insert[ForChocoModule](forChocoModule)
+			} yield created
+		
+		override def byIdModuleAndCodeFormation(idModule: Int, codeFormation: String): Future[Option[ChocoModule]] =
+			for {
+				collection <- collectionContrainte
+				find <- collection.find(JsObject(Seq("idModule" -> JsNumber(idModule), "codeFormation" -> JsString(codeFormation)))).one[ChocoModule]
+			} yield find
+		
+		override def byId(idForChocoModule: String): Future[Option[ForChocModule]] =
+			for {
+				collection <- collectionContrainte
+				find <- collection.find(JsObject(Seq("idForChocoModule" -> JsString(idForChocoModule)))).one[ForChocModule]
 			} yield find
 	}
 }

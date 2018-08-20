@@ -10,7 +10,7 @@ object FrontProblem {
 case class FrontProblem(
 	                       periodOfTrainning: ChocoPeriod,
 	                       numberOfCalendarToFound: Int = 5,
-	                       idProblem: Option[String] = None,
+	                       idForChocoModule: Option[String] = None,
 	                       idConstraint: Option[String] = None,
 	                       idModuleFormation: Option[String] = None
                        )

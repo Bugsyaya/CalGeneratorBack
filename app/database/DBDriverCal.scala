@@ -2,7 +2,7 @@ package database
 
 import models.Front.FrontProblem
 import models.choco.{ChocoConstraint, ChocoModule}
-import models.database.{Constraint, ConstraintModule}
+import models.database.{Constraint, ConstraintModule, ForChocoModule}
 import models.{Calendrier, ModuleFormation}
 import reactivemongo.api.commands.WriteResult
 
@@ -53,6 +53,14 @@ trait ConstraintCollection {
 	def all: Future[Seq[Constraint]]
 }
 
+trait ForChocModule {
+	def save(forChocoModule: ForChocoModule): Future[WriteResult]
+	
+	def byIdModuleAndCodeFormation(idModule: Int, codeFormation: String): Future[Option[ChocoModule]]
+	
+	def byId(idForChocoModule: String): Future[Option[ForChocoModule]]
+}
+
 trait APICal {
 	def close(): Future[Unit]
 	
@@ -67,6 +75,8 @@ trait APICal {
 	val ChocoConstraintCollection: ChocoConstraintCollection
 	
 	val ConstraintCollection: ConstraintCollection
+	
+	val ForChocModule: ForChocModule
 	
 	//	val ChocoModuleCollection: ChocoModuleCollection
 }
