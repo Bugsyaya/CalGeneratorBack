@@ -1,5 +1,6 @@
 package models.choco
 
+import models.choco.Constraint.Entree.ChocoConstraint
 import play.api.libs.json.Json
 
 object ChocoProbleme {
@@ -7,8 +8,8 @@ object ChocoProbleme {
 }
 
 case class ChocoProbleme(
-	                    periodOfTrainning: ChocoPeriod,
-	                    numberOfCalendarToFound: Int,
-	                    constraints: Option[ChocoConstraint] = None,
-	                    moduleOfTraining: Seq[ChocoModule] = Seq.empty
+	                        periodOfTraining: ChocoPeriod,
+	                        numberOfCalendarToFound: Int,
+	                        constraints: Option[ChocoConstraint] = None,
+	                        moduleOfTraining: Seq[ChocoModule] = Seq.empty
                  )

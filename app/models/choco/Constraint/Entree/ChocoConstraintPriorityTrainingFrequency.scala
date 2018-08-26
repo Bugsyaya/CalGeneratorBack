@@ -1,4 +1,4 @@
-package models.choco
+package models.choco.Constraint.Entree
 
 import play.api.libs.json.Json
 
@@ -8,5 +8,6 @@ object ChocoConstraintPriorityTrainingFrequency {
 
 case class ChocoConstraintPriorityTrainingFrequency(
 	                                                   priority: Option[Int] = Some(-1),
-	                           value: ChocoConstraintTrainingFrequency
+	                           value: ChocoConstraintTrainingFrequency,
+	                                                   id: String
                            )

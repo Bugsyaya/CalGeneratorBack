@@ -1,4 +1,6 @@
-package models.choco
+package models.choco.Constraint.Entree
+
+import java.util.UUID
 
 import play.api.libs.json.Json
 
@@ -8,5 +10,6 @@ object ChocoConstraintPriorityInteger {
 
 case class ChocoConstraintPriorityInteger(
 	                                         priority: Option[Int] = Some(-1),
-	                           value: Int
-                           )
+	                                         value: Int,
+	                                         id: String
+                                         )

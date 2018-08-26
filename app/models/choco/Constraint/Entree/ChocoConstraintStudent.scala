@@ -1,5 +1,6 @@
-package models.choco
+package models.choco.Constraint.Entree
 
+import models.choco.ChocoClasses
 import play.api.libs.json.Json
 
 object ChocoConstraintStudent{

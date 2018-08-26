@@ -11,4 +11,4 @@ case class ChocoClasses(
 	                       period: ChocoPeriod,
 	                       realDuration: Int,
 	                       idPlace: Int
-                      )
+                       )

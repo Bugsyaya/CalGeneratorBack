@@ -6,7 +6,7 @@ import javax.inject.Inject
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import database._
-import models.choco.ChocoConstraint
+import models.choco.Constraint.Entree.ChocoConstraint
 import models.database.Constraint
 import play.api.libs.json.Json
 import play.api.mvc.{AbstractController, ControllerComponents}

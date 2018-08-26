@@ -1,5 +1,6 @@
-package models.choco
+package models.choco.Constraint.Entree
 
+import models.choco.ChocoPeriod
 import play.api.libs.json.Json
 
 object ChocoConstraintPriorityPeriod {
@@ -8,5 +9,6 @@ object ChocoConstraintPriorityPeriod {
 
 case class ChocoConstraintPriorityPeriod(
 	                                        priority: Option[Int] = Some(-1),
-	                             value: ChocoPeriod
+	                             value: ChocoPeriod,
+	                                        id: String
                              )

@@ -2,11 +2,12 @@ package controllers
 
 import javax.inject.Inject
 
+
+import helper.API
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import database.{DBDriverENI, ENIConf, ENIDB}
 import models.ENI.{ENIFormation, ENIModule}
-import models._
 import play.api.mvc.{AbstractController, ControllerComponents}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -28,7 +29,7 @@ class FormationController @Inject()(cc : ControllerComponents) extends AbstractC
 	}
 	
 	def moduleByCodeFormation(codeFormation: String) = Action.async {
-		db.FormationCollection.moduleByCodeFormation(codeFormation).flatMap{modules =>
+		API.moduleByFormation(codeFormation).flatMap{modules =>
 			Future.sequence(modules.map { module =>
 				db.ModuleCollection.byId(module.toInt)
 					.filter(_.isDefined)

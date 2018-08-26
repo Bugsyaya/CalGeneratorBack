@@ -6,7 +6,6 @@ import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import com.google.common.util.concurrent.Futures.FutureCombiner
 import database._
-import models.Front.FrontCalendrier
 import models.choco.ChocoModule
 import models.database.ConstraintModule
 import play.api.libs.json.Json

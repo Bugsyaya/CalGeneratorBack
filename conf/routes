@@ -31,6 +31,14 @@ GET     /formations                         controllers.FormationController.show
 GET     /formations/:codeFormation          controllers.FormationController.byCodeFormation(codeFormation)
 GET     /formations/:codeFormation/modules  controllers.FormationController.moduleByCodeFormation(codeFormation)
 
+# FrontModulePrerequis
+GET     /modulesPrerequis/:id               controllers.FrontModulePrerequisController.byId(id)
+POST    /modulesPrerequis                   controllers.FrontModulePrerequisController.create
+
+# FrontModulePrerequisPlanning
+GET     /modulesPrerequisPlanning/:id       controllers.FrontModulePrerequisPlanningController.byId(id)
+POST    /modulesPrerequisPlanning           controllers.FrontModulePrerequisPlanningController.create
+
 # Lieu
 GET     /lieux                              controllers.LieuController.show
 GET     /lieux/:codeLieu                    controllers.LieuController.byCodeLieu(codeLieu: Int)

@@ -78,17 +78,19 @@ Pour relancer un container arrété, suivre les explications suivantes :
 }
 ```
 
-### ConstraintPriorityBoolean
+### F
 
 | Nom      | Type    | Optionnel | Valeur défaut |
 | -------- | ------- | --------- | ------------- |
 | priority | Int     | Oui       | -1            |
 | value    | Boolean | Non       |               |
+| id       | String  | Non       |               | 
 
 ```json
 {
   "priority": 2,
-  "value": true
+  "value": true,
+  "id": "78c8fg03-bg47-52dg-013c-6782b8fc64g6"
 }
 ```
 
@@ -98,11 +100,13 @@ Pour relancer un container arrété, suivre les explications suivantes :
 | -------- | ---- | --------- | ------------- |
 | priority | Int  | Oui       | -1            |
 | value    | Int  | Non       |               |
+| id       | String  | Non       |               |
 
 ```json
 {
   "priority": 2,
-  "value": 20
+  "value": 20,
+  "id": "78c8fg03-bg47-52dg-013c-6782b8fc64g6"
 }
 ```
 
@@ -112,6 +116,7 @@ Pour relancer un container arrété, suivre les explications suivantes :
 | -------- | ------ | --------- | ------------- |
 | priority | Int    | Oui       | -1            |
 | value    | Period | Non       |               |
+| id       | String  | Non       |               |
 
 ```json
 {
@@ -119,7 +124,8 @@ Pour relancer un container arrété, suivre les explications suivantes :
   "value": {
     "start": "",
     "end": ""
-  }
+  },
+  "id": "78c8fg03-bg47-52dg-013c-6782b8fc64g6"
 }
 ```
 
@@ -129,6 +135,7 @@ Pour relancer un container arrété, suivre les explications suivantes :
 | -------- | ----------------- | --------- | ------------- |
 | priority | Int               | Oui       | -1            |
 | value    | ConstraintStudent | Non       |               |
+| id       | String  | Non       |               |
 
 ```json
 {
@@ -136,7 +143,8 @@ Pour relancer un container arrété, suivre les explications suivantes :
   "value": {
     "idStudent": 20,
     "listClassees": []
-  }
+  },
+  "id": "78c8fg03-bg47-52dg-013c-6782b8fc64g6"
 }
 ```
 
@@ -146,6 +154,7 @@ Pour relancer un container arrété, suivre les explications suivantes :
 | -------- | ------------------------ | --------- | ------------- |
 | priority | Int                      | Oui       | -1            |
 | value    | ConstraintStudentCompany | Non       |               |
+| id       | String  | Non       |               |
 
 ```json
 {
@@ -162,7 +171,8 @@ Pour relancer un container arrété, suivre les explications suivantes :
         "listClassees": []
       }
     ]
-  }
+  },
+  "id": "78c8fg03-bg47-52dg-013c-6782b8fc64g6"
 }
 ```
 
@@ -172,6 +182,7 @@ Pour relancer un container arrété, suivre les explications suivantes :
 | -------- | --------------------------- | --------- | ------------- |
 | priority | Int                         | Oui       | -1            |
 | value    | ConstraintTrainingFrequency | Non       |               |
+| id       | String  | Non       |               |
 
 ```json
 {
@@ -179,7 +190,8 @@ Pour relancer un container arrété, suivre les explications suivantes :
   "value": {
     "maxWeekInTraining": 2,
     "minWeekInCompagny": 3
-  }
+  },
+  "id": "78c8fg03-bg47-52dg-013c-6782b8fc64g6"
 }
 ```
 
@@ -258,7 +270,7 @@ Génère n calendrier(s).
 
 | Méthode | Route          | Paramètres                   | Optionnel | Valeur défaut |
 | ------- | -------------- | ---------------------------- | --------- | ------------- |
-| POST    | /generationCal | periodOfTrainning: Period    | Non       |               |
+| POST    | /generationCal | periodOfTraining: Period    | Non       |               |
 |         |                | numberOfCalendarToFound: Int | Oui       | 5             |
 |         |                | idProblem: String            | Oui       |               |
 |         |                | idConstraint: String         | Oui       |               |
@@ -268,20 +280,256 @@ Exemple d'entrée : POST https://myServer/generationCal
 
 ```json
 {
-  "periodOfTrainning": {
-    "start": "",
-    "end": ""
-  },
-  "idProblem": "",
-  "idConstraint": "",
-  "idModuleFormation": ""
-}
+   "periodOfTraining": {
+     "start": "2016-09-11",
+     "end": "2020-11-24"
+   },
+   "idConstraint": "67b7ef92-af36-41cf-902b-5671a7eb53f5",
+   "idModulePrerequisPlanning": "qwerty",
+   "numberOfCalendarToFound": 1,
+   "codeFormation": "17ASR"
+ }
 ```
 
 Exemple de retour :
 
 ```json
-
+[
+  {
+    "idCalendrier": "d647b3bc-9397-4ad9-9f8d-09d32fd56247",
+    "constraint": [],
+    "cours": [
+      {
+        "debut": "2018-04-09 00:00:00.0",
+        "fin": "2018-04-20 00:00:00.0",
+        "dureeReelleEnHeures": 70,
+        "codePromotion": "HASR_107",
+        "idCours": "8AEB9E0F-482D-4A3F-9DAC-5DB08852B033",
+        "idModule": 506,
+        "libelleCours": "UTIL-POSTE",
+        "dureePrevueEnHeures": 70,
+        "dateAdefinir": false,
+        "codeLieu": 1
+      },
+      {
+        "debut": "2018-06-04 00:00:00.0",
+        "fin": "2018-06-15 00:00:00.0",
+        "dureeReelleEnHeures": 70,
+        "codePromotion": "HASR_107",
+        "idCours": "1458FA7A-9E7C-43B0-A1AA-46805F70555B",
+        "idModule": 721,
+        "libelleCours": "SERV-RES17",
+        "dureePrevueEnHeures": 70,
+        "dateAdefinir": false,
+        "codeLieu": 1
+      },
+      {
+        "debut": "2018-06-18 00:00:00.0",
+        "fin": "2018-06-29 00:00:00.0",
+        "dureeReelleEnHeures": 70,
+        "codePromotion": "HTSRI108",
+        "idCours": "C9437277-C1A7-4822-9C4C-C9DC8CFA204C",
+        "idModule": 478,
+        "libelleCours": "CISCO-1",
+        "dureePrevueEnHeures": 70,
+        "dateAdefinir": false,
+        "codeLieu": 1
+      },
+      {
+        "debut": "2018-07-30 00:00:00.0",
+        "fin": "2018-08-10 00:00:00.0",
+        "dureeReelleEnHeures": 70,
+        "codePromotion": "HASR_107",
+        "idCours": "F4F273BF-471F-487F-8B61-474CAAEA2251",
+        "idModule": 519,
+        "libelleCours": "TOIP-MESSAGERIE",
+        "dureePrevueEnHeures": 70,
+        "dateAdefinir": false,
+        "codeLieu": 1
+      },
+      {
+        "debut": "2018-08-20 00:00:00.0",
+        "fin": "2018-08-24 00:00:00.0",
+        "dureeReelleEnHeures": 35,
+        "codePromotion": "HASR_107",
+        "idCours": "12BC3217-6F00-4855-9068-30F0E00D1CEB",
+        "idModule": 317,
+        "libelleCours": "NAGIOS",
+        "dureePrevueEnHeures": 35,
+        "dateAdefinir": false,
+        "codeLieu": 1
+      },
+      {
+        "debut": "2018-08-27 00:00:00.0",
+        "fin": "2018-09-14 00:00:00.0",
+        "dureeReelleEnHeures": 105,
+        "codePromotion": "HASR_107",
+        "idCours": "D196835A-9F7A-4742-BA90-989450AEC145",
+        "idModule": 523,
+        "libelleCours": "CISCO-2-3",
+        "dureePrevueEnHeures": 105,
+        "dateAdefinir": false,
+        "codeLieu": 1
+      },
+      {
+        "debut": "2018-10-01 00:00:00.0",
+        "fin": "2018-10-05 00:00:00.0",
+        "dureeReelleEnHeures": 35,
+        "codePromotion": "HASR_108",
+        "idCours": "5DA4D845-D665-4662-955C-2D56121F7981",
+        "idModule": 625,
+        "libelleCours": "PROJ-TSRIT",
+        "dureePrevueEnHeures": 35,
+        "dateAdefinir": false,
+        "codeLieu": 1
+      },
+      {
+        "debut": "2018-10-08 00:00:00.0",
+        "fin": "2018-10-26 00:00:00.0",
+        "dureeReelleEnHeures": 105,
+        "codePromotion": "HASR_109",
+        "idCours": "76D478D0-9F9E-491D-A39F-2E2E187DD0A6",
+        "idModule": 509,
+        "libelleCours": "ADMIN-SYST",
+        "dureePrevueEnHeures": 105,
+        "dateAdefinir": false,
+        "codeLieu": 1
+      },
+      {
+        "debut": "2018-11-12 00:00:00.0",
+        "fin": "2018-11-23 00:00:00.0",
+        "dureeReelleEnHeures": 70,
+        "codePromotion": "HTSRI109",
+        "idCours": "E18B0C3B-0AA9-40E5-8374-186877C6E37D",
+        "idModule": 722,
+        "libelleCours": "SRVRES-MSP",
+        "dureePrevueEnHeures": 70,
+        "dateAdefinir": false,
+        "codeLieu": 1
+      },
+      {
+        "debut": "2018-11-26 00:00:00.0",
+        "fin": "2018-12-07 00:00:00.0",
+        "dureeReelleEnHeures": 70,
+        "codePromotion": "HASR_107",
+        "idCours": "2FE7C23A-CB78-497F-9967-A05F7621774D",
+        "idModule": 527,
+        "libelleCours": "UTIL-ADMIN-BD",
+        "dureePrevueEnHeures": 70,
+        "dateAdefinir": false,
+        "codeLieu": 1
+      },
+      {
+        "debut": "2018-12-10 00:00:00.0",
+        "fin": "2018-12-21 00:00:00.0",
+        "dureeReelleEnHeures": 70,
+        "codePromotion": "HASR_109",
+        "idCours": "38B15181-8B6E-48AC-92FF-59558A0785F6",
+        "idModule": 517,
+        "libelleCours": "SCRIPT-PWSHEL",
+        "dureePrevueEnHeures": 70,
+        "dateAdefinir": false,
+        "codeLieu": 1
+      },
+      {
+        "debut": "2019-01-02 00:00:00.0",
+        "fin": "2019-01-04 00:00:00.0",
+        "dureeReelleEnHeures": 21,
+        "codePromotion": "HASR_108",
+        "idCours": "46220A43-1142-4A47-90CD-8C6CE6B37B3C",
+        "idModule": 93,
+        "libelleCours": "STAGE-ASR",
+        "dureePrevueEnHeures": 280,
+        "dateAdefinir": false,
+        "codeLieu": 1
+      },
+      {
+        "debut": "2019-01-07 00:00:00.0",
+        "fin": "2019-01-18 00:00:00.0",
+        "dureeReelleEnHeures": 70,
+        "codePromotion": "HASR_108",
+        "idCours": "681F4C54-31A5-4059-A608-E86B8E1ED444",
+        "idModule": 529,
+        "libelleCours": "ADMIN-SYST-AV",
+        "dureePrevueEnHeures": 70,
+        "dateAdefinir": false,
+        "codeLieu": 1
+      },
+      {
+        "debut": "2019-01-21 00:00:00.0",
+        "fin": "2019-02-01 00:00:00.0",
+        "dureeReelleEnHeures": 70,
+        "codePromotion": "HASR_107",
+        "idCours": "F76EFA16-6F3B-4ADC-9CF8-311E3B20AFF3",
+        "idModule": 536,
+        "libelleCours": "SERV-WEB",
+        "dureePrevueEnHeures": 70,
+        "dateAdefinir": false,
+        "codeLieu": 1
+      },
+      {
+        "debut": "2019-02-04 00:00:00.0",
+        "fin": "2019-02-22 00:00:00.0",
+        "dureeReelleEnHeures": 105,
+        "codePromotion": "HASR_108",
+        "idCours": "4B3E5C9C-3AB0-44A1-A6C9-53F9E0EDE219",
+        "idModule": 531,
+        "libelleCours": "SERV-RES-SEC",
+        "dureePrevueEnHeures": 105,
+        "dateAdefinir": false,
+        "codeLieu": 1
+      },
+      {
+        "debut": "2019-02-25 00:00:00.0",
+        "fin": "2019-03-01 00:00:00.0",
+        "dureeReelleEnHeures": 35,
+        "codePromotion": "HASR_108",
+        "idCours": "0CB5D014-8B29-4DC1-A2DA-8E7437A8F597",
+        "idModule": 533,
+        "libelleCours": "VIRT-ASR",
+        "dureePrevueEnHeures": 35,
+        "dateAdefinir": false,
+        "codeLieu": 1
+      },
+      {
+        "debut": "2019-03-04 00:00:00.0",
+        "fin": "2019-03-08 00:00:00.0",
+        "dureeReelleEnHeures": 35,
+        "codePromotion": "HTSRI110",
+        "idCours": "B08018B1-8B5E-4CAD-B6D5-991D3039708F",
+        "idModule": 513,
+        "libelleCours": "VIRT-TSRIT",
+        "dureePrevueEnHeures": 35,
+        "dateAdefinir": false,
+        "codeLieu": 1
+      },
+      {
+        "debut": "2019-03-11 00:00:00.0",
+        "fin": "2019-03-15 00:00:00.0",
+        "dureeReelleEnHeures": 35,
+        "codePromotion": "HTSRI110",
+        "idCours": "902A5C40-FB6C-48BD-8655-5FF56BD06FD8",
+        "idModule": 515,
+        "libelleCours": "GPROJ-TSRIT",
+        "dureePrevueEnHeures": 35,
+        "dateAdefinir": false,
+        "codeLieu": 1
+      },
+      {
+        "debut": "2019-03-18 00:00:00.0",
+        "fin": "2019-05-10 00:00:00.0",
+        "dureeReelleEnHeures": 259,
+        "codePromotion": "HASR_108",
+        "idCours": "77E75ED7-475A-4ED4-B4A3-FF9C2849215A",
+        "idModule": 93,
+        "libelleCours": "STAGE-ASR",
+        "dureePrevueEnHeures": 280,
+        "dateAdefinir": false,
+        "codeLieu": 1
+      }
+    ]
+  }
+]
 ```
 
 ### Constraints
@@ -292,7 +540,8 @@ Création de contraintes.
 
 | Méthode | Route        | Paramètres                                               | Optionnel | Valeur défaut |
 | ------- | ------------ | -------------------------------------------------------- | --------- | ------------- |
-| POST    | /constraints | place: ConstraintPriorityInteger                         | Oui       |               |
+| POST    | /constraints | id: String                                               | Non       |               |
+|         |              | place: ConstraintPriorityInteger                         | Oui       |               |
 |         |              | annualNumberOfHour: ConstraintPriorityInteger            | Oui       |               |
 |         |              | maxDurationOfTraining: ConstraintPriorityInteger         | Oui       |               |
 |         |              | trainingFrequency: ConstraintPriorityTrainingFrequency   | Oui       |               |
@@ -306,8 +555,10 @@ Exemple d'entrée : POST https://myServer/constraints
 
 ```json
 {
+  "idConstraint": "67b7ef92-af36-41cf-902b-5671a7eb53f5",
   "place": {
-    "value": 1
+    "value": 1,
+    "id": "78c8fg03-bg47-52dg-013c-6782b8fc64g6"
   }
 }
 ```
@@ -318,7 +569,8 @@ Exemple de retour :
 {
   "idConstraint": "67b7ef92-af36-41cf-902b-5671a7eb53f5",
   "place": {
-    "value": 1
+    "value": 1,
+    "id": "78c8fg03-bg47-52dg-013c-6782b8fc64g6"
   }
 }
 ```
@@ -340,7 +592,8 @@ Exemple de retour :
   {
     "idConstraint": "67b7ef92-af36-41cf-902b-5671a7eb53f5",
     "place": {
-      "value": 1
+      "value": 1,
+      "id": "78c8fg03-bg47-52dg-013c-6782b8fc64g6"
     }
   }
 ]
@@ -362,7 +615,8 @@ Exemple de retour :
 {
   "idConstraint": "67b7ef92-af36-41cf-902b-5671a7eb53f5",
   "place": {
-    "value": 1
+    "value": 1,
+    "id": "78c8fg03-bg47-52dg-013c-6782b8fc64g6"
   }
 }
 ```
@@ -718,39 +972,71 @@ Exemple de retour :
 }
 ```
 
-### ModulesConstraints
+### ModulesPrerequis
 
-Création de contraintes de module.
+Création de prerequis pour un module.
 
 | Méthode | Route               | Paramètres                         | Optionnel | Valeur défaut |
 | ------- | ------------------- | ---------------------------------- | --------- | ------------- |
-| POST    | /modulesConstraints | idModule: Int                      | Non       |               |
-|         |                     | codeFormation: String              | Non       |               |
-|         |                     | listIdModulePrerequisite: Seq[Int] | Oui       |               |
-|         |                     | listIdModuleOptional: Seq[Int]     | Oui       |               |
+| POST    | /modulesPrerequis   | idModulePrerequis: String          | Non       |               |
+|         |                     | idModule: Int                      | Non       |               |
+|         |                     | idModuleObligatoire: Seq[Int]      | Oui       | Liste vide    |
+|         |                     | idModuleOpionnel: Seq[Int]         | Oui       | Liste vide    |
+|         |                     | titre: String                      | Non       |               |
+|         |                     | description: String                | Non       |               |
 
-Exemple d'entrée : POST https://myServer/modulesConstraints
+Exemple d'entrée : POST https://myServer/modulesPrerequis
 
 ```json
-[
-  {
-    "idModule": 20,
-    "codeFormation": "17CDI",
-    "listIdModulePrerequisite": [4, 5]
-  }
-]
+{
+	"idModulePrerequis": "1234567890",
+	"idModule": 731,
+    "idModuleObligatoire": [
+    	735,
+    	738
+    	],
+    "idModuleOpionnel": [
+    	739
+    	],
+    "titre": "Titre pour le module 731",
+    "description": "Description pour le module"
+}
 ```
 
 Exemple de retour :
 
 ```json
-[
-  {
-    "idModule": 20,
-    "codeFormation": "17CDI",
-    "listIdModulePrerequisite": [4, 5]
-  }
-]
+TODO
+```
+
+### ModulesPrerequisPlanning
+
+Création de prerequis pour un module.
+
+| Méthode | Route               | Paramètres                         | Optionnel | Valeur défaut |
+| ------- | ------------------- | ---------------------------------- | --------- | ------------- |
+| POST    | /modulesPrerequis   | idModulePrerequisPlanning: String  | Non       |               |
+|         |                     | idModulePrerequis: Seq[Int]        | Non       |               |
+|         |                     | titre: String                      | Non       |               |
+|         |                     | description: String                | Non       |               |
+
+Exemple d'entrée : POST https://myServer/modulesPrerequisPlanning
+
+```json
+{
+	"idModulePrerequisPlanning": "qwerty",
+	"idModulePrerequis": [
+		"1234567890"
+		],
+    "titre": "Titre pour la liste des modulesPrerequis",
+    "description": "Description pour la liste des modulesPrerequis"
+}
+```
+
+Exemple de retour :
+
+```json
+TODO
 ```
 
 ### Promotions

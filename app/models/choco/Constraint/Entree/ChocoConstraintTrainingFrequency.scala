@@ -1,4 +1,4 @@
-package models.choco
+package models.choco.Constraint.Entree
 
 import play.api.libs.json.Json
 
@@ -8,5 +8,5 @@ object ChocoConstraintTrainingFrequency {
 
 case class ChocoConstraintTrainingFrequency(
 	                            maxWeekInTraining: Int,
-	                            minWeekInCompagny: Int
+	                            minWeekInCompany: Int
                             )

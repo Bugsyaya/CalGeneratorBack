@@ -8,9 +8,9 @@ object FrontProblem {
 }
 
 case class FrontProblem(
-	                       periodOfTrainning: ChocoPeriod,
+	                       periodOfTraining: ChocoPeriod,
 	                       numberOfCalendarToFound: Int = 5,
-	                       idForChocoModule: Option[String] = None,
 	                       idConstraint: Option[String] = None,
-	                       idModuleFormation: Option[String] = None
+	                       idModulePrerequisPlanning: Option[String] = None,
+	                       codeFormation: String
                        )

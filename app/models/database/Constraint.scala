@@ -2,6 +2,7 @@ package models.database
 
 import java.util.UUID
 
+import models.choco.Constraint.Entree._
 import models.choco._
 import play.api.libs.json.Json
 

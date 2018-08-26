@@ -1,7 +1,8 @@
 package database
 
-import models.Front.FrontProblem
-import models.choco.{ChocoConstraint, ChocoModule}
+import models.Front.{FrontModulePrerequis, FrontModulePrerequisPlanning, FrontProblem}
+import models.choco.ChocoModule
+import models.choco.Constraint.Entree.ChocoConstraint
 import models.database.{Constraint, ConstraintModule, ForChocoModule}
 import models.{Calendrier, ModuleFormation}
 import play.api.libs.json.{JsNumber, JsObject, JsString, JsValue}
@@ -95,11 +96,11 @@ case class CalDB(conf: CalConf) extends APICal{
 				created <- collection.insert[FrontProblem](problem)
 			} yield created
 		
-		override def update(problem: FrontProblem) : Future[WriteResult] =
-			for {
-				collection <- collectionProblem
-				update <- collection.update(JsObject(Seq("formationId" -> JsString(problem.idProblem.getOrElse("")))), problem)
-			} yield update
+//		override def update(problem: FrontProblem) : Future[WriteResult] =
+//			for {
+//				collection <- collectionProblem
+//				update <- collection.update(JsObject(Seq("formationId" -> JsString(problem.idProblem.getOrElse("")))), problem)
+//			} yield update
 		
 		override def byId(idProblem: String): Future[Option[FrontProblem]] =
 			for {
@@ -136,7 +137,52 @@ case class CalDB(conf: CalConf) extends APICal{
 			} yield result
 	}
 	
+	val ModulePrerequisCollection = new ModulePrerequisCollection {
+		private def collectionModulePrerequis: Future[JSONCollection] =
+			defaultDB
+				.map(_.collection[JSONCollection]("modulePrerequis"))
+				.recover {
+					case e: Exception =>
+						throw new RuntimeException("db not reachable")
+				}
+		
+		override def byId(id: String): Future[Option[FrontModulePrerequis]] =
+			for {
+				collection <- collectionModulePrerequis
+				result <- collection.find(JsObject(Seq("idModulePrerequis" -> JsString(id)))).one[FrontModulePrerequis]
+			} yield result
+		
+		override def create(frontModulePrerequis: FrontModulePrerequis): Future[WriteResult] =
+			for {
+				collection <- collectionModulePrerequis
+				created <- collection.insert[FrontModulePrerequis](frontModulePrerequis)
+			} yield created
+	}
+	
+	val ModulePrerequisPlanningCollection = new ModulePrerequisPlanningCollection {
+		private def collectionModulePrerequisPlanning: Future[JSONCollection] =
+			defaultDB
+				.map(_.collection[JSONCollection]("modulePrerequisPlanning"))
+				.recover {
+					case e: Exception =>
+						throw new RuntimeException("db not reachable")
+				}
+		
+		override def byId(id: String): Future[Option[FrontModulePrerequisPlanning]] =
+			for {
+				collection <- collectionModulePrerequisPlanning
+				result <- collection.find(JsObject(Seq("idModulePrerequisPlanning" -> JsString(id)))).one[FrontModulePrerequisPlanning]
+			} yield result
+		
+		override def create(frontModulePrerequisPlanning: FrontModulePrerequisPlanning): Future[WriteResult] =
+			for {
+				collection <- collectionModulePrerequisPlanning
+				created <- collection.insert[FrontModulePrerequisPlanning](frontModulePrerequisPlanning)
+			} yield created
+	}
+	
 	val ConstraintCollection = new ConstraintCollection {
+	import models.Front.FrontModulePrerequis
 		private def constraintCollection: Future[JSONCollection] =
 			defaultDB
 				.map(_.collection[JSONCollection]("contraint"))
@@ -186,34 +232,36 @@ case class CalDB(conf: CalConf) extends APICal{
 			for {
 				collection <- collectionContrainte
 				find <- collection.find(JsObject(Seq("idConstraint" -> JsString(chocoConstraintId)))).one[ChocoConstraint]
-			} yield find
+			} yield {
+				find
+			}
 	}
 	
-	val ForChocoModule = new ForChocModule {
-		private def collectionContrainte: Future[JSONCollection] =
-			defaultDB
-				.map(_.collection[JSONCollection]("contraint"))
-				.recover {
-					case e: Exception =>
-						throw new RuntimeException("db not reachable")
-				}
-		
-		override def save(forChocoModule: ForChocoModule): Future[WriteResult] =
-			for {
-				collection <- collectionContrainte
-				created <- collection.insert[ForChocoModule](forChocoModule)
-			} yield created
-		
-		override def byIdModuleAndCodeFormation(idModule: Int, codeFormation: String): Future[Option[ChocoModule]] =
-			for {
-				collection <- collectionContrainte
-				find <- collection.find(JsObject(Seq("idModule" -> JsNumber(idModule), "codeFormation" -> JsString(codeFormation)))).one[ChocoModule]
-			} yield find
-		
-		override def byId(idForChocoModule: String): Future[Option[ForChocModule]] =
-			for {
-				collection <- collectionContrainte
-				find <- collection.find(JsObject(Seq("idForChocoModule" -> JsString(idForChocoModule)))).one[ForChocModule]
-			} yield find
-	}
+//	val ForChocoModule = new ForChocoModule {
+//		private def collectionContrainte: Future[JSONCollection] =
+//			defaultDB
+//				.map(_.collection[JSONCollection]("contraint"))
+//				.recover {
+//					case e: Exception =>
+//						throw new RuntimeException("db not reachable")
+//				}
+//
+//		override def save(forChocoModule: ForChocoModule): Future[WriteResult] =
+//			for {
+//				collection <- collectionContrainte
+//				created <- collection.insert[ForChocoModule](forChocoModule)
+//			} yield created
+//
+//		override def byIdModuleAndCodeFormation(idModule: Int, codeFormation: String): Future[Option[ChocoModule]] =
+//			for {
+//				collection <- collectionContrainte
+//				find <- collection.find(JsObject(Seq("idModule" -> JsNumber(idModule), "codeFormation" -> JsString(codeFormation)))).one[ChocoModule]
+//			} yield find
+//
+//		override def byId(idForChocoModule: String): Future[Option[ForChocModule]] =
+//			for {
+//				collection <- collectionContrainte
+//				find <- collection.find(JsObject(Seq("idForChocoModule" -> JsString(idForChocoModule)))).one[ForChocModule]
+//			} yield find
+//	}
 }

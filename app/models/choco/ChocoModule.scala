@@ -10,7 +10,7 @@ case class ChocoModule(
 	                      idModule: Int,
 	                      nbWeekOfModule: Int,
 	                      nbHourOfModule: Int,
-	                      listIdModulePrerequisite: Option[Seq[Int]] = None,
-	                      listIdModuleOptional: Option[Seq[Int]] = None,
-	                      listClasses: Option[Seq[String]] = None
+	                      listIdModulePrerequisite: Seq[Int],
+	                      listIdModuleOptional: Seq[Int],
+	                      listClasses: Seq[ChocoClasses]
                         )

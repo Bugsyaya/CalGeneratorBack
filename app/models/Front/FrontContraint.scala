@@ -1,12 +1,15 @@
-package models.choco
+package models.Front
 
+import models.choco.Constraint.Entree._
+import models.choco._
 import play.api.libs.json.Json
 
-object ChocoConstraint {
-	implicit val format = Json.format[ChocoConstraint]
+object FrontContraint {
+	implicit val format = Json.format[FrontContraint]
 }
 
-case class ChocoConstraint(
+case class FrontContraint(
+                         id: String,
 	                          place: Option[ChocoConstraintPriorityInteger] = None,
 	                          annualNumberOfHour: Option[ChocoConstraintPriorityInteger] = None,
 	                          maxDurationOfTraining: Option[ChocoConstraintPriorityInteger] = None,

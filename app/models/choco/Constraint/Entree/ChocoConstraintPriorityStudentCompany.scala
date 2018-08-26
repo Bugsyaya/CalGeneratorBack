@@ -1,4 +1,4 @@
-package models.choco
+package models.choco.Constraint.Entree
 
 import play.api.libs.json.Json
 
@@ -8,5 +8,6 @@ object ChocoConstraintPriorityStudentCompany{
 
 case class ChocoConstraintPriorityStudentCompany(
 	                                                priority: Option[Int] = Some(-1),
-	                               value: ChocoConstraintStudentCompany
+	                               value: ChocoConstraintStudentCompany,
+	                                                id: String
                                )

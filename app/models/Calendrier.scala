@@ -1,7 +1,7 @@
 package models
 
 import models.ENI.ENICours
-import models.choco.ChocoConstraint
+import models.choco.Constraint.Sortie.{ChocoConstraint, ChocoCours}
 import play.api.libs.json.Json
 
 object Calendrier {
@@ -10,8 +10,6 @@ object Calendrier {
 
 case class Calendrier (
 	                      idCalendrier: String,
-	                      codeFormation: String,
-	                      cours: Seq[ENICours] = Seq.empty,
-	                      contraintesResolus: Seq[ChocoConstraint] = Seq.empty,
-	                      contrainteNonResolu: Seq[ChocoConstraint] = Seq.empty
+	                      constraint: Seq[ChocoConstraint],
+	                      cours: Seq[ENICours] = Seq.empty
                       )
