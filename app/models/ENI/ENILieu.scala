@@ -1,18 +1,17 @@
-package models
+package models.ENI
 
 import java.sql.ResultSet
+
 import helper._
 import play.api.libs.json.Json
 
-object Lieu {
-	implicit val format = Json.format[Lieu]
-	implicit def fromResultSet(rs: ResultSet): Seq[Lieu] = {
+object ENILieu {
+	implicit val format = Json.format[ENILieu]
+	implicit def fromResultSet(rs: ResultSet): Seq[ENILieu] = {
 		Utils.results(rs){
-			case r => Lieu(
+			case r => ENILieu(
 				r.getInt("codeLieu"),
 				r.getString("libelle"),
-				r.getBoolean("archive"),
-				r.getBoolean("gestionEmargement"),
 				r.getString("debutAM"),
 				r.getString("finAM"),
 				r.getString("debutPM"),
@@ -24,11 +23,9 @@ object Lieu {
 	}
 }
 
-case class Lieu (
+case class ENILieu(
 	                codeLieu: Int,
 	                libelle: String,
-	                archive: Boolean,
-	                gestionEmargement: Boolean,
 	                debutAM: String,
 	                finAM: String,
 	                debutPM: String,

@@ -1,29 +1,28 @@
-package models
+package models.ENI
 
 import java.sql.ResultSet
+
 import helper._
 import play.api.libs.json.Json
 
-object UniteFormation {
-	implicit val format = Json.format[UniteFormation]
-	implicit def fromResultSet(rs: ResultSet): Seq[UniteFormation] = {
+object ENIUniteFormation {
+	implicit val format = Json.format[ENIUniteFormation]
+	implicit def fromResultSet(rs: ResultSet): Seq[ENIUniteFormation] = {
 		Utils.results(rs){
-			case r => UniteFormation(r.getString("libelle"),
+			case r => ENIUniteFormation(r.getString("libelle"),
 				r.getInt("dureeEnHeures"),
 				r.getInt("dureeEnSemaines"),
 				r.getString("libelleCourt"),
-				r.getInt("idUniteFormation"),
-				r.getBoolean("archiver")
+				r.getInt("idUniteFormation")
 			)}.toSeq
 	}
 }
 
-case class UniteFormation (
+case class ENIUniteFormation(
 	                          libelle: String,
 	                          dureeEnHeures: Int,
 	                          dureeEnSemaines: Int,
 	                          libelleCourt: String,
-	                          idUniteFormation: Int,
-	                          archiver: Boolean
+	                          idUniteFormation: Int
                           )
 	

@@ -5,7 +5,7 @@ import javax.inject.Inject
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import database.{DBDriverENI, ENIConf, ENIDB}
-import models.{Cours, Entreprise, UniteFormation}
+import models.ENI.{ENIEntreprise, ENIUniteFormation}
 import play.api.mvc.{AbstractController, ControllerComponents}
 
 import scala.concurrent.ExecutionContext
@@ -19,10 +19,10 @@ class EntrepriseController @Inject()(cc : ControllerComponents) extends Abstract
 	implicit val mat: ActorMaterializer = ActorMaterializer()
 	
 	def show = Action.async {
-		db.EntrepriseCollection.all.map(result => Ok(toJson[Seq[Entreprise]](result)))
+		db.EntrepriseCollection.all.map(result => Ok(toJson[Seq[ENIEntreprise]](result)))
 	}
 	
 	def byCodeEntreprise(codeEntreprise: Int) = Action.async {
-		db.EntrepriseCollection.byCodeEntreprise(codeEntreprise).map(result => Ok(toJson[Option[Entreprise]](result)))
+		db.EntrepriseCollection.byCodeEntreprise(codeEntreprise).map(result => Ok(toJson[Option[ENIEntreprise]](result)))
 	}
 }

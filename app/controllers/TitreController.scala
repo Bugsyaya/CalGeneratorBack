@@ -5,13 +5,13 @@ import javax.inject.Inject
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import database.{DBDriverENI, ENIConf, ENIDB}
-import models.ENI.{ENICours, ENIUniteFormation}
+import models.ENI.ENITitre
 import play.api.mvc.{AbstractController, ControllerComponents}
 
 import scala.concurrent.ExecutionContext
 import play.api.libs.json.Json.toJson
 
-class CoursController @Inject()(cc : ControllerComponents) extends AbstractController(cc){
+class TitreController @Inject()(cc : ControllerComponents) extends AbstractController(cc){
 	val db = ENIDB(DBDriverENI(ENIConf()))
 	
 	implicit val system: ActorSystem = ActorSystem()
@@ -19,10 +19,10 @@ class CoursController @Inject()(cc : ControllerComponents) extends AbstractContr
 	implicit val mat: ActorMaterializer = ActorMaterializer()
 	
 	def show = Action.async {
-		db.CoursCollection.all.map(result => Ok(toJson[Seq[ENICours]](result)))
+		db.TitreCollection.all.map(result => Ok(toJson[Seq[ENITitre]](result)))
 	}
 	
-	def byId(id: String) = Action.async {
-		db.CoursCollection.byId(id).map(result => Ok(toJson[Option[ENICours]](result)))
+	def byCodeTitre(codeTitre: String) = Action.async {
+		db.TitreCollection.byCodeTitre(codeTitre).map(result => Ok(toJson[Option[ENITitre]](result)))
 	}
 }
