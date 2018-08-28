@@ -1,9 +1,9 @@
 package models.choco
 
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 
 object ChocoModule {
-	implicit val format = Json.format[ChocoModule]
+	implicit val format: OFormat[ChocoModule] = Json.format[ChocoModule]
 }
 
 case class ChocoModule(
@@ -13,4 +13,4 @@ case class ChocoModule(
 	                      listIdModulePrerequisite: Seq[Int],
 	                      listIdModuleOptional: Seq[Int],
 	                      listClasses: Seq[ChocoClasses]
-                        )
+                      )

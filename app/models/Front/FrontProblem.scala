@@ -1,10 +1,10 @@
 package models.Front
 
 import models.choco.ChocoPeriod
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 
 object FrontProblem {
-	implicit val format = Json.format[FrontProblem]
+	implicit val format: OFormat[FrontProblem] = Json.format[FrontProblem]
 }
 
 case class FrontProblem(

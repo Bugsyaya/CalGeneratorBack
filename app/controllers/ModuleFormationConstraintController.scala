@@ -8,11 +8,11 @@ import akka.stream.ActorMaterializer
 import database._
 import models.ModuleFormation
 import play.api.libs.json.Json
-import play.api.mvc.{AbstractController, ControllerComponents}
+import play.api.mvc.{AbstractController, Action, AnyContent, ControllerComponents}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class ModuleFormationConstraintController @Inject()(cc : ControllerComponents) extends AbstractController(cc){
+class ModuleFormationConstraintController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
 	val db = ENIDB(DBDriverENI(ENIConf()))
 	val dbMongo = CalDB(CalConf("localhost", 27017, "CalDatabase"))
 	
@@ -20,10 +20,10 @@ class ModuleFormationConstraintController @Inject()(cc : ControllerComponents) e
 	implicit val ec: ExecutionContext = system.dispatcher
 	implicit val mat: ActorMaterializer = ActorMaterializer()
 	
-	def create = Action.async { request =>
+	def create: Action[AnyContent] = Action.async { request =>
 		request.body.asJson.map { requ =>
 			Json.fromJson[ModuleFormation](requ).map { req =>
-				db.FormationCollection.moduleByCodeFormation(req.codeFormation).flatMap{idModules =>
+				db.FormationCollection.moduleByCodeFormation(req.codeFormation).flatMap { idModules =>
 					val moduleFormation = ModuleFormation(
 						Some(UUID.randomUUID().toString),
 						req.codeFormation,
@@ -31,7 +31,7 @@ class ModuleFormationConstraintController @Inject()(cc : ControllerComponents) e
 						req.description,
 						Some(idModules.map(_.toInt))
 					)
-					dbMongo.ModuleFormationCollection.save(moduleFormation).map{wr =>
+					dbMongo.ModuleFormationCollection.save(moduleFormation).map { wr =>
 						if (wr.n > 0) Ok(Json.toJson[ModuleFormation](moduleFormation))
 						else InternalServerError("Une erreur est survenue")
 					}

@@ -1,9 +1,9 @@
 package models.choco
 
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 
 object ChocoClasses {
-	implicit val format = Json.format[ChocoClasses]
+	implicit val format: OFormat[ChocoClasses] = Json.format[ChocoClasses]
 }
 
 case class ChocoClasses(

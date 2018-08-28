@@ -3,7 +3,7 @@ package database
 import models.Front.{FrontModulePrerequis, FrontModulePrerequisPlanning, FrontProblem}
 import models.choco.ChocoModule
 import models.choco.Constraint.Entree.ChocoConstraint
-import models.database.{Constraint, ConstraintModule, ForChocoModule}
+import models.database.{Constraint, ConstraintModule}
 import models.{Calendrier, ModuleFormation}
 import reactivemongo.api.commands.WriteResult
 
@@ -11,6 +11,12 @@ import scala.concurrent.Future
 
 trait CalendrierCollection {
 	def save(calendrier: Calendrier): Future[WriteResult]
+	
+	def all: Future[Seq[Calendrier]]
+	
+	def update(calendrier: Calendrier): Future[WriteResult]
+	
+	def byId(idCalendar: String): Future[Option[Calendrier]]
 }
 
 trait ModuleFormationCollection {
@@ -22,7 +28,7 @@ trait ModuleFormationCollection {
 trait ConstraintModuleCollection {
 	def save(chocoModules: Seq[ConstraintModule]): Future[Seq[WriteResult]]
 	
-//	def byId(idModule: String): Future[Option[ChocoModule]]
+	//	def byId(idModule: String): Future[Option[ChocoModule]]
 	
 	def byId(chocoModuleId: Int): Future[Option[ConstraintModule]]
 }
@@ -30,7 +36,7 @@ trait ConstraintModuleCollection {
 trait ProblemCollection {
 	def create(problem: FrontProblem): Future[WriteResult]
 	
-//	def update(problem: FrontProblem): Future[WriteResult]
+	//	def update(problem: FrontProblem): Future[WriteResult]
 	
 	def byId(idProblem: String): Future[Option[FrontProblem]]
 }
@@ -46,15 +52,19 @@ trait ChocoConstraintCollection {
 }
 
 trait ModulePrerequisCollection {
-	def byId(id:String): Future[Option[FrontModulePrerequis]]
+	def byId(id: String): Future[Option[FrontModulePrerequis]]
 	
 	def create(frontModulePrerequis: FrontModulePrerequis): Future[WriteResult]
+	
+	def all: Future[Seq[FrontModulePrerequis]]
 }
 
 trait ModulePrerequisPlanningCollection {
-	def byId(id:String): Future[Option[FrontModulePrerequisPlanning]]
+	def byId(id: String): Future[Option[FrontModulePrerequisPlanning]]
 	
 	def create(frontModulePrerequisPlanning: FrontModulePrerequisPlanning): Future[WriteResult]
+	
+	def all: Future[Seq[FrontModulePrerequisPlanning]]
 }
 
 
@@ -71,7 +81,7 @@ trait ForChocoModule {
 	
 	def byIdModuleAndCodeFormation(idModule: Int, codeFormation: String): Future[Option[ChocoModule]]
 	
-//	def byId(idForChocoModule: String): Future[Option[ForChocoModule]]
+	//	def byId(idForChocoModule: String): Future[Option[ForChocoModule]]
 }
 
 trait APICal {
@@ -93,7 +103,7 @@ trait APICal {
 	
 	val ConstraintCollection: ConstraintCollection
 	
-//	val ForChocModule: ForChocoModule
+	//	val ForChocModule: ForChocoModule
 	
 	//	val ChocoModuleCollection: ChocoModuleCollection
 }

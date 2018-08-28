@@ -3,11 +3,10 @@ package models.database
 import java.util.UUID
 
 import models.choco.Constraint.Entree._
-import models.choco._
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 
-object Constraint{
-	implicit val format = Json.format[Constraint]
+object Constraint {
+	implicit val format: OFormat[Constraint] = Json.format[Constraint]
 }
 
 case class Constraint(
