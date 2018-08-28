@@ -1,20 +1,19 @@
 package database
 
 import models.Front.{FrontModulePrerequis, FrontModulePrerequisPlanning, FrontProblem}
-import models.choco.ChocoModule
 import models.choco.Constraint.Entree.ChocoConstraint
-import models.database.{Constraint, ConstraintModule, ForChocoModule}
+import models.database.{Constraint, ConstraintModule}
 import models.{Calendrier, ModuleFormation}
 import play.api.libs.json.{JsNumber, JsObject, JsString, JsValue}
+import play.modules.reactivemongo.json._
 import reactivemongo.api._
 import reactivemongo.api.commands.WriteResult
 import reactivemongo.play.json.collection.JSONCollection
-import play.modules.reactivemongo.json._
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.util.control.NonFatal
 import scala.concurrent.Future
 import scala.concurrent.duration.DurationInt
+import scala.util.control.NonFatal
 
 
 case class CalConf(
@@ -23,10 +22,10 @@ case class CalConf(
 	                  dbName: String = "CalDatabase"
                   )
 
-case class CalDB(conf: CalConf) extends APICal{
+case class CalDB(conf: CalConf) extends APICal {
 	val uri = s"""mongodb://${conf.host}:${conf.port}/${conf.dbName}"""
 	
-	lazy val mongoConn = Future.fromTry(MongoConnection.parseURI(uri).map(MongoDriver().connection))
+	lazy val mongoConn: Future[MongoConnection] = Future.fromTry(MongoConnection.parseURI(uri).map(MongoDriver().connection))
 	
 	lazy val defaultDB: Future[DefaultDB] =
 		(for {
@@ -57,6 +56,28 @@ case class CalDB(conf: CalConf) extends APICal{
 				created <- collection.insert[Calendrier](calendrier)
 			} yield created
 		}
+		
+		override def update(calendrier: Calendrier): Future[WriteResult] = {
+			for {
+				collection <- collectionCalendrier
+				update <- collection.update(JsObject(Seq("idCalendrier" -> JsString(calendrier.idCalendrier))), calendrier)
+			} yield update
+		}
+		
+		override def all: Future[Seq[Calendrier]] =
+			for {
+				collection <- collectionCalendrier
+				result <- collection
+					.find[JsObject](JsObject(Seq.empty[(String, JsValue)]))
+					.cursor[Calendrier]()
+					.collect[Seq]()
+			} yield result
+		
+		override def byId(idCalendar: String): Future[Option[Calendrier]] =
+			for {
+				collection <- collectionCalendrier
+				result <- collection.find(JsObject(Seq("idCalendrier" -> JsString(idCalendar)))).one[Calendrier]
+			} yield result
 	}
 	
 	val ModuleFormationCollection = new ModuleFormationCollection {
@@ -96,11 +117,11 @@ case class CalDB(conf: CalConf) extends APICal{
 				created <- collection.insert[FrontProblem](problem)
 			} yield created
 		
-//		override def update(problem: FrontProblem) : Future[WriteResult] =
-//			for {
-//				collection <- collectionProblem
-//				update <- collection.update(JsObject(Seq("formationId" -> JsString(problem.idProblem.getOrElse("")))), problem)
-//			} yield update
+		//		override def update(problem: FrontProblem) : Future[WriteResult] =
+		//			for {
+		//				collection <- collectionProblem
+		//				update <- collection.update(JsObject(Seq("formationId" -> JsString(problem.idProblem.getOrElse("")))), problem)
+		//			} yield update
 		
 		override def byId(idProblem: String): Future[Option[FrontProblem]] =
 			for {
@@ -157,6 +178,15 @@ case class CalDB(conf: CalConf) extends APICal{
 				collection <- collectionModulePrerequis
 				created <- collection.insert[FrontModulePrerequis](frontModulePrerequis)
 			} yield created
+		
+		override def all: Future[Seq[FrontModulePrerequis]] =
+			for {
+				collection <- collectionModulePrerequis
+				result <- collection
+					.find[JsObject](JsObject(Seq.empty[(String, JsValue)]))
+					.cursor[FrontModulePrerequis]()
+					.collect[Seq]()
+			} yield result
 	}
 	
 	val ModulePrerequisPlanningCollection = new ModulePrerequisPlanningCollection {
@@ -179,10 +209,18 @@ case class CalDB(conf: CalConf) extends APICal{
 				collection <- collectionModulePrerequisPlanning
 				created <- collection.insert[FrontModulePrerequisPlanning](frontModulePrerequisPlanning)
 			} yield created
+		
+		override def all: Future[Seq[FrontModulePrerequisPlanning]] =
+			for {
+				collection <- collectionModulePrerequisPlanning
+				result <- collection
+					.find[JsObject](JsObject(Seq.empty[(String, JsValue)]))
+					.cursor[FrontModulePrerequisPlanning]()
+					.collect[Seq]()
+			} yield result
 	}
 	
 	val ConstraintCollection = new ConstraintCollection {
-	import models.Front.FrontModulePrerequis
 		private def constraintCollection: Future[JSONCollection] =
 			defaultDB
 				.map(_.collection[JSONCollection]("contraint"))
@@ -236,32 +274,4 @@ case class CalDB(conf: CalConf) extends APICal{
 				find
 			}
 	}
-	
-//	val ForChocoModule = new ForChocoModule {
-//		private def collectionContrainte: Future[JSONCollection] =
-//			defaultDB
-//				.map(_.collection[JSONCollection]("contraint"))
-//				.recover {
-//					case e: Exception =>
-//						throw new RuntimeException("db not reachable")
-//				}
-//
-//		override def save(forChocoModule: ForChocoModule): Future[WriteResult] =
-//			for {
-//				collection <- collectionContrainte
-//				created <- collection.insert[ForChocoModule](forChocoModule)
-//			} yield created
-//
-//		override def byIdModuleAndCodeFormation(idModule: Int, codeFormation: String): Future[Option[ChocoModule]] =
-//			for {
-//				collection <- collectionContrainte
-//				find <- collection.find(JsObject(Seq("idModule" -> JsNumber(idModule), "codeFormation" -> JsString(codeFormation)))).one[ChocoModule]
-//			} yield find
-//
-//		override def byId(idForChocoModule: String): Future[Option[ForChocModule]] =
-//			for {
-//				collection <- collectionContrainte
-//				find <- collection.find(JsObject(Seq("idForChocoModule" -> JsString(idForChocoModule)))).one[ForChocModule]
-//			} yield find
-//	}
 }

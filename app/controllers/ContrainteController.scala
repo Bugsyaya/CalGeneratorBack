@@ -9,23 +9,23 @@ import database._
 import models.choco.Constraint.Entree.ChocoConstraint
 import models.database.Constraint
 import play.api.libs.json.Json
-import play.api.mvc.{AbstractController, ControllerComponents}
+import play.api.mvc.{AbstractController, Action, AnyContent, ControllerComponents}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class ContrainteController @Inject()(cc : ControllerComponents) extends AbstractController(cc) {
+class ContrainteController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
 	val db = ENIDB(DBDriverENI(ENIConf()))
 	val dbMongo = CalDB(CalConf("localhost", 27017, "CalDatabase"))
-
+	
 	implicit val system: ActorSystem = ActorSystem()
 	implicit val ec: ExecutionContext = system.dispatcher
 	implicit val mat: ActorMaterializer = ActorMaterializer()
-
-	def create = Action.async { request =>
-		request.body.asJson.map{response =>
+	
+	def create: Action[AnyContent] = Action.async { request =>
+		request.body.asJson.map { response =>
 			println(response)
 			println(Json.fromJson[ChocoConstraint](response))
-			Json.fromJson[ChocoConstraint](response).map{chocoContrainte =>
+			Json.fromJson[ChocoConstraint](response).map { chocoContrainte =>
 				val cc = Constraint(
 					UUID.randomUUID().toString,
 					chocoContrainte.place,
@@ -38,25 +38,25 @@ class ContrainteController @Inject()(cc : ControllerComponents) extends Abstract
 					chocoContrainte.listPeriodeOfTrainingInclusion,
 					chocoContrainte.prerequisModule
 				)
-
-				dbMongo.ConstraintCollection.create(cc).map{wr =>
-					if(wr.n > 0) Ok(Json.toJson[Constraint](cc))
+				
+				dbMongo.ConstraintCollection.create(cc).map { wr =>
+					if (wr.n > 0) Ok(Json.toJson[Constraint](cc))
 					else InternalServerError("Il y a eu une erreur")
 				}
 			}.getOrElse(Future.successful(BadRequest("Il manque des param")))
 		}.getOrElse(Future.successful(BadRequest("Y a un pb")))
 	}
 	
-	def byId(idConstraint: String) = Action.async{
-		dbMongo.ConstraintCollection.byId(idConstraint).map{constraintOpt =>
-			constraintOpt.map{constraint =>
+	def byId(idConstraint: String): Action[AnyContent] = Action.async {
+		dbMongo.ConstraintCollection.byId(idConstraint).map { constraintOpt =>
+			constraintOpt.map { constraint =>
 				Ok(Json.toJson[Constraint](constraint))
 			}.getOrElse(Ok("Not found"))
 		}
 	}
 	
-	def all = Action.async{
-		dbMongo.ConstraintCollection.all.map{constraints =>
+	def all: Action[AnyContent] = Action.async {
+		dbMongo.ConstraintCollection.all.map { constraints =>
 			Ok(Json.toJson[Seq[Constraint]](constraints))
 		}
 	}
