@@ -70,6 +70,7 @@ GET         /stagiaires/:codeStagiaire                controllers.StagiaireContr
 
 # Synchronise
 GET         /synchronise                              controllers.CalendrierController.alertCalendar
+GET         /calendriers/:status                      controllers.CalendrierController.alertStatus(status)
 
 # Titres
 GET         /titres                                   controllers.TitreController.show

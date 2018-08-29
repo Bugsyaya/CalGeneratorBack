@@ -78,6 +78,14 @@ case class CalDB(conf: CalConf) extends APICal {
 				collection <- collectionCalendrier
 				result <- collection.find(JsObject(Seq("idCalendrier" -> JsString(idCalendar)))).one[Calendrier]
 			} yield result
+		
+		override def byStatus(status: String): Future[Seq[Calendrier]] =
+			for {
+				collection <- collectionCalendrier
+				result <- collection.find(JsObject(Seq("status" -> JsString(status))))
+					.cursor[Calendrier]()
+					.collect[Seq]()
+			} yield result
 	}
 	
 	val ModuleFormationCollection = new ModuleFormationCollection {

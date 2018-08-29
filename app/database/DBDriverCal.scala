@@ -17,6 +17,8 @@ trait CalendrierCollection {
 	def update(calendrier: Calendrier): Future[WriteResult]
 	
 	def byId(idCalendar: String): Future[Option[Calendrier]]
+	
+	def byStatus(status: String): Future[Seq[Calendrier]]
 }
 
 trait ModuleFormationCollection {

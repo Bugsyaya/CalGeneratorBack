@@ -34,16 +34,21 @@ class CalendrierController @Inject()(cc: ControllerComponents) extends AbstractC
 							
 							val allCoursCal = p ++ calendrier.cours.filterNot(c => p.map(_.idCours).contains(c.idCours))
 							
-							if (p.nonEmpty){
-								val updatedCal = calendrier.copy(status = "alerte", cours = allCoursCal)
+							if (p.nonEmpty) {
+								val updatedCal = calendrier.copy(status = Some("alerte"), cours = allCoursCal)
 								dbMongo.CalendrierCollection.update(updatedCal).map(_ => Some(updatedCal))
-//								Some(updatedCal)
 							} else Future.successful(None)
 						}).map(uuu => uuu.filter(_.isDefined).map(_.get))
 					}
 				}).map(_.flatMap(o => o))
 			}
 		} yield Ok(toJson[Seq[Calendrier]](calendriersM))
+	}
+	
+	def alertStatus(status: String): Action[AnyContent] = Action.async {
+		dbMongo.CalendrierCollection.byStatus(status).map { calendriers =>
+			Ok(toJson(calendriers.size))
+		}
 	}
 	
 }

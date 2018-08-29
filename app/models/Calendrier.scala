@@ -11,7 +11,7 @@ object Calendrier {
 
 case class Calendrier(
 	                     idCalendrier: String,
-	                     status: String,
+	                     status: Option[String],
 	                     periodOfTraining: Option[ChocoPeriod] = None,
 	                     constraint: Option[Constraint] = None,
 	                     cours: Seq[ENICoursCustom] = Seq.empty,
