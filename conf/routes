@@ -13,6 +13,13 @@ GET         /message                                  controllers.AsyncControlle
 # CalendrierGenerationChoco
 GET         /verificationCal/:id                      controllers.choco.CalendrierGenerationChocoController.checkCalendar(id)
 POST        /generationCal                            controllers.choco.CalendrierGenerationChocoController.generationCalendrier
+POST        /saveCal                                  controllers.choco.CalendrierGenerationChocoController.saveCalendrier
+
+# Calendrier
+GET         /calendriers                              controllers.CalendrierController.all
+GET         /status/:status                           controllers.CalendrierController.alertStatus(status)
+GET         /calendriers/:id                          controllers.CalendrierController.byId(id)
+
 
 # Constraints
 GET         /constraints/:idConstraint                controllers.ContrainteController.byId(idConstraint)
@@ -70,7 +77,6 @@ GET         /stagiaires/:codeStagiaire                controllers.StagiaireContr
 
 # Synchronise
 GET         /synchronise                              controllers.CalendrierController.alertCalendar
-GET         /calendriers/:status                      controllers.CalendrierController.alertStatus(status)
 
 # Titres
 GET         /titres                                   controllers.TitreController.show

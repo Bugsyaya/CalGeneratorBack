@@ -11,11 +11,12 @@ object Calendrier {
 
 case class Calendrier(
 	                     idCalendrier: String,
-	                     status: Option[String],
+	                     status: String,
 	                     periodOfTraining: Option[ChocoPeriod] = None,
 	                     constraint: Option[Constraint] = None,
 	                     cours: Seq[ENICoursCustom] = Seq.empty,
 	                     idModulePrerequisPlanning: Option[String],
 	                     titre: Option[String] = None,
-	                     description: Option[String] = None
+	                     description: Option[String] = None,
+	                     codeFormation: Option[String] = None
                      )

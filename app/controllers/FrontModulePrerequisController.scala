@@ -14,7 +14,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class FrontModulePrerequisController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
 	val db = ENIDB(DBDriverENI(ENIConf()))
-	val dbMongo = CalDB(CalConf("localhost", 27017, "CalDatabase"))
+	val dbMongo = CalDB(CalConf())
 	
 	implicit val system: ActorSystem = ActorSystem()
 	implicit val ec: ExecutionContext = system.dispatcher

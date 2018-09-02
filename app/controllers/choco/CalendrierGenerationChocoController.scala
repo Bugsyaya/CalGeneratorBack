@@ -23,7 +23,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class CalendrierGenerationChocoController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
 	val db = ENIDB(DBDriverENI(ENIConf()))
-	val dbMongo = CalDB(CalConf("localhost", 27017, "CalDatabase"))
+	val dbMongo = CalDB(CalConf())
 	
 	implicit val system: ActorSystem = ActorSystem()
 	implicit val ec: ExecutionContext = system.dispatcher
@@ -50,9 +50,10 @@ class CalendrierGenerationChocoController @Inject()(cc: ControllerComponents) ex
 						.map { chocoCal =>
 							Json.parse(chocoCal).as[Seq[ChocoCalendrier]]
 						}
-					
+					_ = println(s"chocoCalendriers : ${toJson[Seq[ChocoCalendrier]](chocoCalendriers)}")
+				
 					calendriers <- chocoCaltoCal(chocoCalendriers.map(_.copy(periodOfTraining = Some(req.periodOfTraining))), req.idConstraint, req.idModulePrerequisPlanning)
-					_ = println(s"calendriers : $calendriers")
+					_ = println(s"calendriers : ${toJson[Seq[Calendrier]](calendriers)}")
 				} yield {
 					Ok(toJson[Seq[Calendrier]](calendriers))
 				}
@@ -60,10 +61,10 @@ class CalendrierGenerationChocoController @Inject()(cc: ControllerComponents) ex
 		}.getOrElse(Future.successful(InternalServerError("Il manque des parametres")))
 	}
 	
-	def savecalendrier: Action[AnyContent] = Action.async { request =>
+	def saveCalendrier: Action[AnyContent] = Action.async { request =>
 		request.body.asJson.map { requ =>
 			Json.fromJson[Calendrier](requ).map { req =>
-				dbMongo.CalendrierCollection.save(req.copy(status = Some("created"))).map { wr =>
+				dbMongo.CalendrierCollection.save(req.copy(status = "created")).map { wr =>
 					if (wr.n > 0) Ok(toJson("save"))
 					else InternalServerError(toJson("error"))
 				}
@@ -148,7 +149,7 @@ class CalendrierGenerationChocoController @Inject()(cc: ControllerComponents) ex
 				
 				calendriers <- chocoCaltoCal(chocoCalendriers)
 				
-				calendrierF <- dbMongo.CalendrierCollection.save(calendriers.head.copy(status = Some("checked"))).map(_ => calendriers.head)
+				calendrierF <- dbMongo.CalendrierCollection.save(calendriers.head.copy(status = "checked")).map(_ => calendriers.head)
 			} yield {
 				Ok(toJson[Calendrier](calendrierF))
 			}
@@ -271,14 +272,6 @@ class CalendrierGenerationChocoController @Inject()(cc: ControllerComponents) ex
 		)
 	}
 	
-	//	private def chocoCalToCal(chocoCalendriers: Seq[ChocoCalendrier], status: String, idConstraint: Option[String] = None, idModulePrerequisPlanning: Option[String] = None): Future[Seq[Calendrier]] = {
-	//		chocoCaltoCal(chocoCalendriers, status, idConstraint, idModulePrerequisPlanning).flatMap { cal =>
-	//			Future.sequence(cal.map { c =>
-	//				dbMongo.CalendrierCollection.save(c).map { wr => c }
-	//			})
-	//		}
-	//	}
-	
 	private def chocoCaltoCal(chocoCalendriers: Seq[ChocoCalendrier], idConstraint: Option[String] = None, idModulePrerequisPlanning: Option[String] = None): Future[Seq[Calendrier]] = {
 		val conF = if (idConstraint.isDefined) dbMongo.ConstraintCollection.byId(idConstraint.get)
 		else Future.successful(None)
@@ -309,7 +302,7 @@ class CalendrierGenerationChocoController @Inject()(cc: ControllerComponents) ex
 				conF.map(c =>
 					Calendrier(
 						UUID.randomUUID().toString,
-						None,
+						"created",
 						chocoCalendrier.periodOfTraining,
 						c,
 						eniCoursCustom.filter(_.isDefined).map(_.get),

@@ -1,5 +1,7 @@
 package database
 
+import java.lang.Integer.parseInt
+
 import models.Front.{FrontModulePrerequis, FrontModulePrerequisPlanning, FrontProblem}
 import models.choco.Constraint.Entree.ChocoConstraint
 import models.database.{Constraint, ConstraintModule}
@@ -13,14 +15,20 @@ import reactivemongo.play.json.collection.JSONCollection
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.duration.DurationInt
+import scala.sys.env
 import scala.util.control.NonFatal
 
 
-case class CalConf(
-	                  host: String = "127.0.0.1",
-	                  port: Int = 27017,
-	                  dbName: String = "CalDatabase"
-                  )
+class CalConf {
+	println(s"env : $env")
+	val host: String = env.getOrElse("MONGO_HOST", "localhost")
+	val port: Int = parseInt(env.getOrElse("MONGO_PORT", "27017"))
+	val dbName: String = env.getOrElse("MONGO_DATABASE", "CalDatabase")
+}
+object CalConf {
+	private val config = new CalConf()
+	def apply(): CalConf = config
+}
 
 case class CalDB(conf: CalConf) extends APICal {
 	val uri = s"""mongodb://${conf.host}:${conf.port}/${conf.dbName}"""

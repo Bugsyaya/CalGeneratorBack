@@ -7,6 +7,7 @@ import models.ENI._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import scala.sys.env
 import scala.util.control.NonFatal
 
 
@@ -133,13 +134,17 @@ trait API {
 	val UniteParFormationCollection: UniteParFormationCollection
 }
 
-case class ENIConf(
-	                  host: String = "localhost",
-	                  port: Int = 1433,
-	                  dbName: String = "master",
-	                  login: String = "sa",
-	                  password: String = "yourStrong(!)Password"
-                  )
+class ENIConf {
+      val host: String = env.getOrElse("SQLSERVER_HOST", "localhost")
+      val port: Int = Integer.parseInt(env.getOrElse("SQLSERVER_PORT", "1433"))
+      val dbName: String = env.getOrElse("SQLSERVER_DATABASE", "master")
+      val login: String = env.getOrElse("SQLSERVER_LOGIN", "sa")
+      val password: String = env.getOrElse("SQLSERVER_PASSWORD","yourStrong(!)Password")
+}
+object ENIConf {
+	val config = new ENIConf
+	def apply(): ENIConf = config
+}
 
 case class DBDriverENI(conf: ENIConf) {
 	val uri = s"""jdbc:sqlserver://${conf.host}:${conf.port};databaseName=${conf.dbName};user=${conf.login};password=${conf.password};"""
