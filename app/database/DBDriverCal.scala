@@ -59,6 +59,8 @@ trait ModulePrerequisCollection {
 	def create(frontModulePrerequis: FrontModulePrerequis): Future[WriteResult]
 	
 	def all: Future[Seq[FrontModulePrerequis]]
+	
+	def update(frontModulePrerequis: FrontModulePrerequis): Future[WriteResult]
 }
 
 trait ModulePrerequisPlanningCollection {

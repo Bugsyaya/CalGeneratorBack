@@ -14,6 +14,7 @@ import models.ENI.{ENICours, ENICoursCustom, ENIModule}
 import models.Front.{FrontModulePrerequis, FrontModulePrerequisPlanning, FrontProblem}
 import models.choco.Constraint.Sortie.ChocoCalendrier
 import models.choco._
+import models.database.Constraint
 import play.api.libs.json.Json
 import play.api.libs.json.Json.toJson
 import play.api.mvc._
@@ -55,7 +56,7 @@ class CalendrierGenerationChocoController @Inject()(cc: ControllerComponents) ex
 					calendriers <- chocoCaltoCal(chocoCalendriers.map(_.copy(periodOfTraining = Some(req.periodOfTraining))), req.idConstraint, req.idModulePrerequisPlanning)
 					_ = println(s"calendriers : ${toJson[Seq[Calendrier]](calendriers)}")
 				} yield {
-					Ok(toJson[Seq[Calendrier]](calendriers))
+					Ok(toJson[Seq[Calendrier]](calendriers.map(_.copy(codeFormation = Some(req.codeFormation)))))
 				}
 			}.getOrElse(Future.successful(InternalServerError("Il manque des parametres")))
 		}.getOrElse(Future.successful(InternalServerError("Il manque des parametres")))
@@ -76,6 +77,9 @@ class CalendrierGenerationChocoController @Inject()(cc: ControllerComponents) ex
 		dbMongo.CalendrierCollection.byId(idCalendrier).flatMap { optCalendrier =>
 			for {
 				chocoModule <- optCalendrier.map { calendrier =>
+					
+					println(s"calendrier : ${toJson[Calendrier](calendrier)}")
+					
 					Future.sequence(
 						calendrier.cours.map { cour =>
 							db.ModuleCollection.byId(cour.idModule).flatMap { moduleOpt =>
@@ -124,6 +128,9 @@ class CalendrierGenerationChocoController @Inject()(cc: ControllerComponents) ex
 						}).map(jj => jj.filter(_.isDefined).map(_.get))
 				}.getOrElse(Future.successful(Seq.empty))
 				
+				
+				_ = println(s"optCalendrier : $optCalendrier")
+				
 				chocoCalendriers <- optCalendrier.map { calendrier =>
 					Http().singleRequest(
 						HttpRequest(
@@ -148,8 +155,20 @@ class CalendrierGenerationChocoController @Inject()(cc: ControllerComponents) ex
 				}.getOrElse(Future.successful(Seq.empty))
 				
 				calendriers <- chocoCaltoCal(chocoCalendriers)
-				
-				calendrierF <- dbMongo.CalendrierCollection.save(calendriers.head.copy(status = "checked")).map(_ => calendriers.head)
+
+				cal: Calendrier = Calendrier(
+					idCalendrier = optCalendrier.map(_.idCalendrier).getOrElse(UUID.randomUUID().toString),
+					status = "checked",
+					periodOfTraining = optCalendrier.flatMap(_.periodOfTraining),
+					constraint = optCalendrier.flatMap(_.constraint),
+					cours = calendriers.head.cours,
+					idModulePrerequisPlanning = optCalendrier.flatMap(_.idModulePrerequisPlanning),
+					titre = optCalendrier.flatMap(_.titre),
+					description = optCalendrier.flatMap(_.description),
+					codeFormation = optCalendrier.flatMap(_.codeFormation)
+				)
+			
+				calendrierF <- dbMongo.CalendrierCollection.update(cal).map(_ => cal)
 			} yield {
 				Ok(toJson[Calendrier](calendrierF))
 			}

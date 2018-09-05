@@ -10,7 +10,7 @@ object Constraint {
 }
 
 case class Constraint(
-	                     idConstraint: String = UUID.randomUUID().toString,
+	                     idConstraint: String,
 	                     place: Option[ChocoConstraintPriorityInteger] = None,
 	                     annualNumberOfHour: Option[ChocoConstraintPriorityInteger] = None,
 	                     maxDurationOfTraining: Option[ChocoConstraintPriorityInteger] = None,
@@ -19,5 +19,7 @@ case class Constraint(
 	                     listStudentRequired: Option[Seq[ChocoConstraintPriorityStudent]] = None,
 	                     listPeriodeOfTrainingExclusion: Option[Seq[ChocoConstraintPriorityPeriod]] = None,
 	                     listPeriodeOfTrainingInclusion: Option[Seq[ChocoConstraintPriorityPeriod]] = None,
-	                     prerequisModule: Option[ChocoConstraintPriorityBoolean] = None
+	                     prerequisModule: Option[ChocoConstraintPriorityBoolean] = None,
+	                     titre: Option[String] = None,
+	                     description: Option[String] = None
                      )
