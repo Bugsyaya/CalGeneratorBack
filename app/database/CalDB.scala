@@ -204,7 +204,7 @@ case class CalDB(conf: CalConf) extends APICal {
 					.collect[Seq]()
 			} yield result
 		
-		override def update(frontModulePrerequis: FrontModulePrerequis): Future[WriteResult] = {
+		override def update(frontModulePrerequis: FrontModulePrerequis): Future[WriteResult] =
 			for {
 				collection <- collectionModulePrerequis
 				update <- collection.update(JsObject(Seq("idModulePrerequis" -> JsString(frontModulePrerequis.idModulePrerequis))), frontModulePrerequis)
