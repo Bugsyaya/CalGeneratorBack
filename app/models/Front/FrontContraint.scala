@@ -8,11 +8,11 @@ object FrontContraint {
 }
 
 case class FrontContraint(
-	                         id: String,
+	                         id: Option[String] = None,
 	                         place: Option[ChocoConstraintPriorityInteger] = None,
 	                         annualNumberOfHour: Option[ChocoConstraintPriorityInteger] = None,
 	                         maxDurationOfTraining: Option[ChocoConstraintPriorityInteger] = None,
-	                         trainingFrequency: Option[ChocoConstraintPriorityTrainingFrequency] = None,
+	                         trainingFrequency: Option[Seq[ChocoConstraintPriorityTrainingFrequency]] = None,
 	                         maxStudentInTraining: Option[ChocoConstraintPriorityStudentCompany] = None,
 	                         listStudentRequired: Option[Seq[ChocoConstraintPriorityStudent]] = None,
 	                         listPeriodeOfTrainingExclusion: Option[Seq[ChocoConstraintPriorityPeriod]] = None,

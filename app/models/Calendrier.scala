@@ -18,5 +18,6 @@ case class Calendrier(
 	                     idModulePrerequisPlanning: Option[String],
 	                     titre: Option[String] = None,
 	                     description: Option[String] = None,
-	                     codeFormation: Option[String] = None
+	                     codeFormation: Option[String] = None,
+	                     historique: Option[Seq[String]] = None
                      )

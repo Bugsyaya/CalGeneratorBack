@@ -4,7 +4,7 @@ import java.lang.Integer.parseInt
 
 import models.Front.{FrontModulePrerequis, FrontModulePrerequisPlanning, FrontProblem}
 import models.choco.Constraint.Entree.ChocoConstraint
-import models.database.{Constraint, ConstraintModule}
+import models.database.{Constraint, ConstraintModule, StagiaireCours}
 import models.{Calendrier, ModuleFormation}
 import play.api.libs.json.{JsNumber, JsObject, JsString, JsValue}
 import play.modules.reactivemongo.json._
@@ -208,6 +208,49 @@ case class CalDB(conf: CalConf) extends APICal {
 			for {
 				collection <- collectionModulePrerequis
 				update <- collection.update(JsObject(Seq("idModulePrerequis" -> JsString(frontModulePrerequis.idModulePrerequis))), frontModulePrerequis)
+			} yield update
+		
+		override def byFormationAndModule(codeFormation: String, idModule: Int): Future[Option[FrontModulePrerequis]] =
+			for {
+				collection <- collectionModulePrerequis
+				result <- collection.find(JsObject(Seq("codeFormation" -> JsString(codeFormation), "idModule" -> JsNumber(idModule)))).one[FrontModulePrerequis]
+			} yield result
+	}
+	
+	val StagiaireCoursCollection = new StagiaireCoursCollection {
+		private def collectionStagiaireCours: Future[JSONCollection] =
+			defaultDB
+				.map(_.collection[JSONCollection]("stagiaireCours"))
+				.recover {
+					case e: Exception =>
+						throw new RuntimeException("db not reachable")
+				}
+		
+		override def byId(id: String): Future[Option[StagiaireCours]] =
+			for {
+				collection <- collectionStagiaireCours
+				result <- collection.find(JsObject(Seq("idCours" -> JsString(id)))).one[StagiaireCours]
+			} yield result
+		
+		override def create(stagiaireCours: StagiaireCours): Future[WriteResult] =
+			for {
+				collection <- collectionStagiaireCours
+				created <- collection.insert[StagiaireCours](stagiaireCours)
+			} yield created
+		
+		override def all: Future[Seq[StagiaireCours]] =
+			for {
+				collection <- collectionStagiaireCours
+				result <- collection
+					.find[JsObject](JsObject(Seq.empty[(String, JsValue)]))
+					.cursor[StagiaireCours]()
+					.collect[Seq]()
+			} yield result
+		
+		override def update(stagiaireCours: StagiaireCours): Future[WriteResult] =
+			for {
+				collection <- collectionStagiaireCours
+				update <- collection.update(JsObject(Seq("idCours" -> JsString(stagiaireCours.idCours))), stagiaireCours)
 			} yield update
 	}
 	

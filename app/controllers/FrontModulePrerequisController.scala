@@ -49,4 +49,11 @@ class FrontModulePrerequisController @Inject()(cc: ControllerComponents) extends
 	def show: Action[AnyContent] = Action.async {
 		dbMongo.ModulePrerequisCollection.all.map(result => Ok(toJson[Seq[FrontModulePrerequis]](result)))
 	}
+	
+	def byFormationAndModule(codeFormation: String, idModule: Int) = Action.async{
+		dbMongo.ModulePrerequisCollection.byFormationAndModule(codeFormation, idModule).map{result =>
+			println(s"result : $result")
+			Ok(toJson[Option[FrontModulePrerequis]](result))
+		}
+	}
 }

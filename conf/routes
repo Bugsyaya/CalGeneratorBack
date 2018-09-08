@@ -4,92 +4,97 @@
 # ~~~~
 #
 ## An example controller showing a sample home page
-GET         /                                            controllers.HomeController.index
+GET         /                                                                  controllers.HomeController.index
 ## An example controller showing how to use dependency injection
-GET         /count                                       controllers.CountController.count
+GET         /count                                                             controllers.CountController.count
 ## An example controller showing how to write asynchronous code
-GET         /message                                     controllers.AsyncController.message
+GET         /message                                                           controllers.AsyncController.message
 
 # CalendrierGenerationChoco
-GET         /verificationCal/:id                         controllers.choco.CalendrierGenerationChocoController.checkCalendar(id)
-POST        /generationCal                               controllers.choco.CalendrierGenerationChocoController.generationCalendrier
-POST        /saveCal                                     controllers.choco.CalendrierGenerationChocoController.saveCalendrier
+GET         /verificationCal/:id                                               controllers.choco.CalendrierGenerationChocoController.checkCalendar(id)
+POST        /generationCal                                                     controllers.choco.CalendrierGenerationChocoController.generationCalendrier
+POST        /saveCal                                                           controllers.choco.CalendrierGenerationChocoController.saveCalendrier
 
 # Calendrier
-GET         /calendriers                                 controllers.CalendrierController.all
-GET         /status/:status                              controllers.CalendrierController.alertStatus(status)
-GET         /calendriers/:id                             controllers.CalendrierController.byId(id)
+GET         /calendriers                                                       controllers.CalendrierController.all
+GET         /status/:status                                                    controllers.CalendrierController.alertStatus(status)
+GET         /calendriers/:id                                                   controllers.CalendrierController.byId(id)
 
 
 # Constraints
-GET         /constraints/:idConstraint                   controllers.ContrainteController.byId(idConstraint)
-GET         /constraints                                 controllers.ContrainteController.all
-POST        /constraints                                 controllers.ContrainteController.create
+GET         /constraints/:idConstraint                                         controllers.ContrainteController.byId(idConstraint)
+GET         /constraints                                                       controllers.ContrainteController.all
+POST        /constraints                                                       controllers.ContrainteController.create
 
 # Cours
-GET         /cours                                       controllers.CoursController.show
-GET         /cours/:id                                   controllers.CoursController.byId(id)
+GET         /cours                                                             controllers.CoursController.show
+GET         /cours/:id                                                         controllers.CoursController.byId(id)
 
 # Entreprises
-GET         /entreprises                                 controllers.EntrepriseController.show
-GET         /entreprises/:codeEntreprise                 controllers.EntrepriseController.byCodeEntreprise(codeEntreprise: Int)
+GET         /entreprises                                                       controllers.EntrepriseController.show
+GET         /entreprises/:codeEntreprise                                       controllers.EntrepriseController.byCodeEntreprise(codeEntreprise: Int)
 
 # Formations
-GET         /formations                                  controllers.FormationController.show
-GET         /formations/:codeFormation                   controllers.FormationController.byCodeFormation(codeFormation)
-GET         /formations/:codeFormation/modules           controllers.FormationController.moduleByCodeFormation(codeFormation)
-GET         /formations/:codeFormation/notmodules        controllers.FormationController.coursByModuleNotInCodeFormation(codeFormation)
+GET         /formations                                                        controllers.FormationController.show
+GET         /formations/:codeFormation                                         controllers.FormationController.byCodeFormation(codeFormation)
+GET         /formations/:codeFormation/modules                                 controllers.FormationController.moduleByCodeFormation(codeFormation)
+GET         /formations/:codeFormation/notmodules                              controllers.FormationController.coursByModuleNotInCodeFormation(codeFormation)
 
 # FrontModulePrerequis
-GET         /modulesPrerequis                            controllers.FrontModulePrerequisController.show
-GET         /modulesPrerequis/:id                        controllers.FrontModulePrerequisController.byId(id)
-POST        /modulesPrerequis                            controllers.FrontModulePrerequisController.create
-POST        /modulesPrerequisUpdate                      controllers.FrontModulePrerequisController.update
+GET         /modulesPrerequis                                                  controllers.FrontModulePrerequisController.show
+GET         /modulesPrerequis/:id                                              controllers.FrontModulePrerequisController.byId(id)
+GET         /modulesPrerequis/formations/:codeFormation/modules/:idModule        controllers.FrontModulePrerequisController.byFormationAndModule(codeFormation, idModule:Int)
+POST        /modulesPrerequis                                                  controllers.FrontModulePrerequisController.create
+POST        /modulesPrerequisUpdate                                            controllers.FrontModulePrerequisController.update
 
 # FrontModulePrerequisPlanning
-GET         /modulesPrerequisPlanning                    controllers.FrontModulePrerequisPlanningController.show
-GET         /modulesPrerequisPlanning/:id                controllers.FrontModulePrerequisPlanningController.byId(id)
-POST        /modulesPrerequisPlanning                    controllers.FrontModulePrerequisPlanningController.create
+GET         /modulesPrerequisPlanning                                          controllers.FrontModulePrerequisPlanningController.show
+GET         /modulesPrerequisPlanning/:id                                      controllers.FrontModulePrerequisPlanningController.byId(id)
+POST        /modulesPrerequisPlanning                                          controllers.FrontModulePrerequisPlanningController.create
 
 # Lieu
-GET         /lieux                                       controllers.LieuController.show
-GET         /lieux/:codeLieu                             controllers.LieuController.byCodeLieu(codeLieu: Int)
+GET         /lieux                                                             controllers.LieuController.show
+GET         /lieux/:codeLieu                                                   controllers.LieuController.byCodeLieu(codeLieu: Int)
 
 # Module
-GET         /modules                                     controllers.ModuleController.show
-GET         /modules/:idModule                           controllers.ModuleController.byId(idModule: Int)
-GET         /modules/:idModule/cours                     controllers.ModuleController.coursByIdModule(idModule: Int)
+GET         /modules                                                           controllers.ModuleController.show
+GET         /modules/:idModule                                                 controllers.ModuleController.byId(idModule: Int)
+GET         /modules/:idModule/cours                                           controllers.ModuleController.coursByIdModule(idModule: Int)
 
 # ModulesConstraints
-POST        /modulesConstraints                          controllers.ModuleContrainteController.save
+POST        /modulesConstraints                                                controllers.ModuleContrainteController.save
 
 # ModulesFormations
-POST        /modulesFormations                           controllers.ModuleFormationConstraintController.create
+POST        /modulesFormations                                                 controllers.ModuleFormationConstraintController.create
 
 # Promotions
-GET         /promotions                                  controllers.PromotionController.show
-GET         /promotions/:codePromotion                   controllers.PromotionController.byCodePromotion(codePromotion)
+GET         /promotions                                                        controllers.PromotionController.show
+GET         /promotions/:codePromotion                                         controllers.PromotionController.byCodePromotion(codePromotion)
 
 # Salles
-GET         /salles                                      controllers.SalleController.show
-GET         /salles/:codeSalle                           controllers.SalleController.byCodeSalle(codeSalle)
+GET         /salles                                                            controllers.SalleController.show
+GET         /salles/:codeSalle                                                 controllers.SalleController.byCodeSalle(codeSalle)
 
 # Stagiaires
-GET         /stagiaires                                  controllers.StagiaireController.show
-GET         /stagiaires/:codeStagiaire                   controllers.StagiaireController.byCodeStagiaire(codeStagiaire: Int)
+GET         /stagiaires                                                        controllers.StagiaireController.show
+GET         /stagiaires/:codeStagiaire                                         controllers.StagiaireController.byCodeStagiaire(codeStagiaire: Int)
+
+# StagiaireCours
+GET         /stagiaireCours                                                    controllers.StagiaireCoursController.all
+GET         /stagiaireCours/:idCours                                           controllers.StagiaireCoursController.byId(idCours)
 
 # Synchronise
-GET         /synchronise                                 controllers.CalendrierController.alertCalendar
+GET         /synchronise                                                       controllers.CalendrierController.alertCalendar
 
 # Titres
-GET         /titres                                      controllers.TitreController.show
-GET         /titres/:codeTitre                           controllers.TitreController.byCodeTitre(codeTitre)
+GET         /titres                                                            controllers.TitreController.show
+GET         /titres/:codeTitre                                                 controllers.TitreController.byCodeTitre(codeTitre)
 
 # UnitesFormations
-GET         /uniteFormations                             controllers.UniteFormationController.show
-GET         /uniteFormations/:idUniteFormation           controllers.UniteFormationController.byId(idUniteFormation: Int)
+GET         /uniteFormations                                                   controllers.UniteFormationController.show
+GET         /uniteFormations/:idUniteFormation                                 controllers.UniteFormationController.byId(idUniteFormation: Int)
 
 # Map static resources from the /public folder to the /assets URL path
-GET         /assets/*file                                controllers.Assets.versioned(path="/public", file: Asset)
+GET         /assets/*file                                                      controllers.Assets.versioned(path="/public", file: Asset)
 
       

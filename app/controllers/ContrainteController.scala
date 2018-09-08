@@ -36,7 +36,9 @@ class ContrainteController @Inject()(cc: ControllerComponents) extends AbstractC
 					chocoContrainte.listStudentRequired,
 					chocoContrainte.listPeriodeOfTrainingExclusion,
 					chocoContrainte.listPeriodeOfTrainingInclusion,
-					chocoContrainte.prerequisModule
+					chocoContrainte.prerequisModule,
+					chocoContrainte.titre,
+					chocoContrainte.description
 				)
 				
 				dbMongo.ConstraintCollection.create(cc).map { wr =>
