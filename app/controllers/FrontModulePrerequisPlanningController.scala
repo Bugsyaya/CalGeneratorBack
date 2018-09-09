@@ -24,7 +24,7 @@ class FrontModulePrerequisPlanningController @Inject()(cc: ControllerComponents)
 		request.body.asJson.map { requ =>
 			Json.fromJson[FrontModulePrerequisPlanning](requ).map { req =>
 				dbMongo.ModulePrerequisPlanningCollection.create(req).map { wr =>
-					if (wr.n > 0) Ok("Module prerequis planning enregistré")
+					if (wr.n > 0) Ok(toJson[FrontModulePrerequisPlanning](req))
 					else InternalServerError("Une erreur est survenue")
 				}
 			}.getOrElse(Future.successful(InternalServerError("Ce n'est pas un ModuleFormation...")))

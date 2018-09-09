@@ -32,6 +32,7 @@ class CalendrierGenerationChocoController @Inject()(cc: ControllerComponents) ex
 	
 	def generationCalendrier: Action[AnyContent] = Action.async { request =>
 		request.body.asJson.map { requ =>
+			println(s"Json.fromJson[FrontProblem](requ) : ${Json.fromJson[FrontProblem](requ).toString}")
 			Json.fromJson[FrontProblem](requ).map { req =>
 				for {
 					chocoProblem <- frontProblemToChocoProblem(req)
@@ -63,13 +64,24 @@ class CalendrierGenerationChocoController @Inject()(cc: ControllerComponents) ex
 		}.getOrElse(Future.successful(InternalServerError("Il manque des parametres")))
 	}
 	
+	def updateCalendrier = Action.async{request =>
+		request.body.asJson.map { requ =>
+			Json.fromJson[Calendrier](requ).map { req =>
+				dbMongo.CalendrierCollection.update(req).map{wr =>
+					if (wr.n > 0) Ok(toJson[Calendrier](req))
+					else InternalServerError(toJson("Une erreur s'est produite"))
+				}
+			}.getOrElse(Future.successful(BadRequest(toJson("error calendar"))))
+		}.getOrElse(Future.successful(InternalServerError(toJson("error"))))
+	}
+	
 	def saveCalendrier: Action[AnyContent] = Action.async { request =>
 		request.body.asJson.map { requ =>
 			Json.fromJson[Calendrier](requ).map { req =>
 				dbMongo.CalendrierCollection.save(req.copy(status = "created")).flatMap { wr =>
 					if (wr.n > 0) {
 						Future.sequence(req.cours.map {cours =>
-							increment(cours.idCours)
+							incrementS(cours.idCours)
 						}) map (wr => Ok(toJson("save")))
 					}
 					else Future.successful(InternalServerError(toJson("error")))
@@ -78,7 +90,51 @@ class CalendrierGenerationChocoController @Inject()(cc: ControllerComponents) ex
 		}.getOrElse(Future.successful(InternalServerError(toJson("error"))))
 	}
 	
-	def increment(idCours: String) = {
+	def increment(idCours: String) = Action.async {
+		dbMongo.StagiaireCoursCollection.byId(idCours)
+			.flatMap { stagiaireCoursOpt =>
+				stagiaireCoursOpt
+					.map{ stagiaireCours =>
+						val newstagiaireCours = stagiaireCours.copy(nbStagiaire = stagiaireCours.nbStagiaire + 1)
+						dbMongo.StagiaireCoursCollection.update(newstagiaireCours).map{wr =>
+							if (wr.n > 0) Ok(toJson[StagiaireCours](newstagiaireCours))
+							else InternalServerError(toJson("Une erreur est survenue"))
+						}
+					}
+					.getOrElse{
+						val stagiaireCours = StagiaireCours(idCours, 1)
+						dbMongo.StagiaireCoursCollection.create(stagiaireCours).map{wr =>
+							if (wr.n > 0) Ok(toJson[StagiaireCours](stagiaireCours))
+							else InternalServerError(toJson("Une erreur est survenue"))
+						}
+					}
+			}
+	}
+	
+	def dincrement(idCours: String) = Action.async {
+		dbMongo.StagiaireCoursCollection.byId(idCours)
+			.flatMap { stagiaireCoursOpt =>
+				stagiaireCoursOpt
+					.map{ stagiaireCours =>
+						val newstagiaireCours = stagiaireCours.copy(nbStagiaire = stagiaireCours.nbStagiaire - 1)
+						dbMongo.StagiaireCoursCollection.update(newstagiaireCours).map{wr =>
+							if (wr.n > 0) Ok(toJson[StagiaireCours](newstagiaireCours))
+							else InternalServerError(toJson("Une erreur est survenue"))
+						}
+					}
+					.getOrElse{
+						val stagiaireCours = StagiaireCours(idCours, 0)
+						dbMongo.StagiaireCoursCollection.create(stagiaireCours).map{wr =>
+							if (wr.n > 0) Ok(toJson[StagiaireCours](stagiaireCours))
+							else InternalServerError(toJson("Une erreur est survenue"))
+						}
+					}
+			}
+	}
+	
+	
+	
+	def incrementS(idCours: String) = {
 		dbMongo.StagiaireCoursCollection.byId(idCours)
 			.flatMap { stagiaireCoursOpt =>
 				stagiaireCoursOpt
@@ -112,8 +168,6 @@ class CalendrierGenerationChocoController @Inject()(cc: ControllerComponents) ex
 			for {
 				chocoModule <- optCalendrier.map { calendrier =>
 					
-					println(s"calendrier : ${toJson[Calendrier](calendrier)}")
-					
 					Future.sequence(
 						calendrier.cours.map { cour =>
 							db.ModuleCollection.byId(cour.idModule).flatMap { moduleOpt =>
@@ -127,7 +181,7 @@ class CalendrierGenerationChocoController @Inject()(cc: ControllerComponents) ex
 														frontModulePrerequisOpt.filter { frontModulePrerequis =>
 															frontModulePrerequis.idModule == cour.idModule
 														}.map { frontModulePrerequis =>
-															(frontModulePrerequis.idModuleOpionnel, frontModulePrerequis.idModuleObligatoire)
+															(frontModulePrerequis.idModuleOptionnel, frontModulePrerequis.idModuleObligatoire)
 														}.getOrElse((Seq.empty, Seq.empty))
 													}
 												}).map { i =>
@@ -166,15 +220,17 @@ class CalendrierGenerationChocoController @Inject()(cc: ControllerComponents) ex
 				_ = println(s"optCalendrier : $optCalendrier")
 				
 				chocoCalendriers <- optCalendrier.map { calendrier =>
+					val chocoVerif = ChocoVerify(
+						periodOfTraining = calendrier.periodOfTraining,
+						constraints = calendrier.constraint,
+						moduleOfTraining = chocoModule
+					)
+					println(s"toJson[ChocoVerify](chocoVerif).toString : ${toJson[ChocoVerify](chocoVerif).toString}")
 					Http().singleRequest(
 						HttpRequest(
 							method = HttpMethods.POST,
 							uri = "http://localhost:8000/verify",
-							entity = HttpEntity(ContentTypes.`application/json`, toJson[ChocoVerify](ChocoVerify(
-								periodOfTraining = calendrier.periodOfTraining,
-								constraints = calendrier.constraint,
-								moduleOfTraining = chocoModule
-							)).toString),
+							entity = HttpEntity(ContentTypes.`application/json`, toJson[ChocoVerify](chocoVerif).toString),
 							headers = Nil
 						)
 					).flatMap { httpRequest: HttpResponse =>
@@ -291,7 +347,7 @@ class CalendrierGenerationChocoController @Inject()(cc: ControllerComponents) ex
 					nbWeekOfModule = infoModule.dureeEnSemaines,
 					nbHourOfModule = infoModule.dureeEnHeures,
 					listIdModulePrerequisite = frontModulePrerequis.idModuleObligatoire,
-					listIdModuleOptional = frontModulePrerequis.idModuleOpionnel,
+					listIdModuleOptional = frontModulePrerequis.idModuleOptionnel,
 					listClasses = listClasses
 				)
 			)
