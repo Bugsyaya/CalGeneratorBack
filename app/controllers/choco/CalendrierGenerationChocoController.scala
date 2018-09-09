@@ -227,23 +227,28 @@ class CalendrierGenerationChocoController @Inject()(cc: ControllerComponents) ex
 						moduleOfTraining = chocoModule
 					)
 					println(s"toJson[ChocoVerify](chocoVerif).toString : ${toJson[ChocoVerify](chocoVerif).toString}")
-					Http().singleRequest(
-						HttpRequest(
-							method = HttpMethods.POST,
-							uri = s"${ChocoConfig.baseUrl}/verify",
-							entity = HttpEntity(ContentTypes.`application/json`, toJson[ChocoVerify](chocoVerif).toString),
-							headers = Nil
-						)
-					).flatMap { httpRequest: HttpResponse =>
-						val u = httpRequest.entity
-							.toStrict(300.millis)
-							.map(_.data.utf8String)
-							.map { chocoCal =>
-								Json.parse(chocoCal).as[ChocoCalendrier]
-							}
-						u.map(c => Seq(c.copy(periodOfTraining = calendrier.periodOfTraining)))
+					try {
+						Http().singleRequest(
+							HttpRequest(
+								method = HttpMethods.POST,
+								uri = s"${ChocoConfig.baseUrl}/verify",
+								entity = HttpEntity(ContentTypes.`application/json`, toJson[ChocoVerify](chocoVerif).toString),
+								headers = Nil
+							)
+						).flatMap { httpRequest: HttpResponse =>
+							val u = httpRequest.entity
+								.toStrict(300.millis)
+								.map(_.data.utf8String)
+								.map { chocoCal =>
+									Json.parse(chocoCal).as[ChocoCalendrier]
+								}
+							u.map(c => Seq(c.copy(periodOfTraining = calendrier.periodOfTraining)))
+						}
+					} catch {
+						case e: Exception => Future.successful(Seq.empty)
 					}
-				}.getOrElse(Future.successful(Seq.empty))
+					}.getOrElse(Future.successful(Seq.empty))
+				
 				
 				calendriers <- chocoCaltoCal(chocoCalendriers)
 				
