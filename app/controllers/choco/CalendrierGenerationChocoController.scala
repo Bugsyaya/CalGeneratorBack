@@ -7,6 +7,7 @@ import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model._
 import akka.stream.ActorMaterializer
+import controllers.ChocoConfig
 import database._
 import helper.API
 import models.Calendrier
@@ -40,7 +41,7 @@ class CalendrierGenerationChocoController @Inject()(cc: ControllerComponents) ex
 					request <- Http().singleRequest(
 						HttpRequest(
 							method = HttpMethods.POST,
-							uri = "http://localhost:8000/solve",
+							uri = s"${ChocoConfig.baseUrl}/solve",
 							entity = HttpEntity(ContentTypes.`application/json`, toJson[ChocoProbleme](chocoProblem).toString),
 							headers = Nil
 						)
@@ -229,7 +230,7 @@ class CalendrierGenerationChocoController @Inject()(cc: ControllerComponents) ex
 					Http().singleRequest(
 						HttpRequest(
 							method = HttpMethods.POST,
-							uri = "http://localhost:8000/verify",
+							uri = s"${ChocoConfig.baseUrl}/verify",
 							entity = HttpEntity(ContentTypes.`application/json`, toJson[ChocoVerify](chocoVerif).toString),
 							headers = Nil
 						)
