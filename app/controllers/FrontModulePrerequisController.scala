@@ -14,7 +14,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class FrontModulePrerequisController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
 	val db = ENIDB(DBDriverENI(ENIConf()))
-	val dbMongo = CalDB(CalConf("localhost", 27017, "CalDatabase"))
+	val dbMongo = CalDB(CalConf())
 	
 	implicit val system: ActorSystem = ActorSystem()
 	implicit val ec: ExecutionContext = system.dispatcher
@@ -35,7 +35,25 @@ class FrontModulePrerequisController @Inject()(cc: ControllerComponents) extends
 		dbMongo.ModulePrerequisCollection.byId(idFrontModulePrerequis).map(result => Ok(toJson[Option[FrontModulePrerequis]](result)))
 	}
 	
+	def update: Action[AnyContent] = Action.async { request =>
+		request.body.asJson.map{requ =>
+			Json.fromJson[FrontModulePrerequis](requ).map { req =>
+				dbMongo.ModulePrerequisCollection.update(req).map { wr =>
+					if (wr.n > 0) Ok(toJson[FrontModulePrerequis](req))
+					else InternalServerError("Une erreur est surevenue")
+				}
+			}.getOrElse(Future.successful(BadRequest("Ce n'est pas un objet de type ModulePrerequis")))
+		}.getOrElse(Future.successful(BadRequest("Il manque des paramètres")))
+	}
+	
 	def show: Action[AnyContent] = Action.async {
 		dbMongo.ModulePrerequisCollection.all.map(result => Ok(toJson[Seq[FrontModulePrerequis]](result)))
+	}
+	
+	def byFormationAndModule(codeFormation: String, idModule: Int) = Action.async{
+		dbMongo.ModulePrerequisCollection.byFormationAndModule(codeFormation, idModule).map{result =>
+			println(s"result : $result")
+			Ok(toJson[Option[FrontModulePrerequis]](result))
+		}
 	}
 }

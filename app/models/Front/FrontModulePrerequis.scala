@@ -10,7 +10,7 @@ case class FrontModulePrerequis(
 	                               idModulePrerequis: String,
 	                               idModule: Int,
 	                               idModuleObligatoire: Seq[Int] = Seq.empty,
-	                               idModuleOpionnel: Seq[Int] = Seq.empty,
+	                               idModuleOptionnel: Seq[Int] = Seq.empty,
 	                               titre: String,
 	                               description: String,
 	                               codeFormation: String

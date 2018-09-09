@@ -17,5 +17,7 @@ case class Calendrier(
 	                     cours: Seq[ENICoursCustom] = Seq.empty,
 	                     idModulePrerequisPlanning: Option[String],
 	                     titre: Option[String] = None,
-	                     description: Option[String] = None
+	                     description: Option[String] = None,
+	                     codeFormation: Option[String] = None,
+	                     historique: Option[Seq[String]] = None
                      )

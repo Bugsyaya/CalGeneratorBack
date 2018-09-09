@@ -13,7 +13,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class CalendrierController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
 	val db = ENIDB(DBDriverENI(ENIConf()))
-	val dbMongo = CalDB(CalConf("localhost", 27017, "CalDatabase"))
+	val dbMongo = CalDB(CalConf())
 	
 	implicit val system: ActorSystem = ActorSystem()
 	implicit val ec: ExecutionContext = system.dispatcher
@@ -34,16 +34,34 @@ class CalendrierController @Inject()(cc: ControllerComponents) extends AbstractC
 							
 							val allCoursCal = p ++ calendrier.cours.filterNot(c => p.map(_.idCours).contains(c.idCours))
 							
-							if (p.nonEmpty){
+							if (p.nonEmpty) {
 								val updatedCal = calendrier.copy(status = "alerte", cours = allCoursCal)
 								dbMongo.CalendrierCollection.update(updatedCal).map(_ => Some(updatedCal))
-//								Some(updatedCal)
 							} else Future.successful(None)
 						}).map(uuu => uuu.filter(_.isDefined).map(_.get))
 					}
 				}).map(_.flatMap(o => o))
 			}
 		} yield Ok(toJson[Seq[Calendrier]](calendriersM))
+	}
+	
+	def alertStatus(status: String): Action[AnyContent] = Action.async {
+		dbMongo.CalendrierCollection.byStatus(status).map { calendriers =>
+			println(s"calendriers : ${calendriers.size}")
+			Ok(toJson(calendriers.size))
+		}
+	}
+	
+	def all = Action.async{
+		dbMongo.CalendrierCollection.all.map{calendriers =>
+			Ok(toJson[Seq[Calendrier]](calendriers))
+		}
+	}
+	
+	def byId(id: String) = Action.async{
+		dbMongo.CalendrierCollection.byId(id).map{calendrier =>
+			Ok(toJson[Option[Calendrier]](calendrier))
+		}
 	}
 	
 }

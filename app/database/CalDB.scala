@@ -1,8 +1,10 @@
 package database
 
+import java.lang.Integer.parseInt
+
 import models.Front.{FrontModulePrerequis, FrontModulePrerequisPlanning, FrontProblem}
 import models.choco.Constraint.Entree.ChocoConstraint
-import models.database.{Constraint, ConstraintModule}
+import models.database.{Constraint, ConstraintModule, StagiaireCours}
 import models.{Calendrier, ModuleFormation}
 import play.api.libs.json.{JsNumber, JsObject, JsString, JsValue}
 import play.modules.reactivemongo.json._
@@ -13,14 +15,20 @@ import reactivemongo.play.json.collection.JSONCollection
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.duration.DurationInt
+import scala.sys.env
 import scala.util.control.NonFatal
 
 
-case class CalConf(
-	                  host: String = "127.0.0.1",
-	                  port: Int = 27017,
-	                  dbName: String = "CalDatabase"
-                  )
+class CalConf {
+	println(s"env : $env")
+	val host: String = env.getOrElse("MONGO_HOST", "localhost")
+	val port: Int = parseInt(env.getOrElse("MONGO_PORT", "27017"))
+	val dbName: String = env.getOrElse("MONGO_DATABASE", "CalDatabase")
+}
+object CalConf {
+	private val config = new CalConf()
+	def apply(): CalConf = config
+}
 
 case class CalDB(conf: CalConf) extends APICal {
 	val uri = s"""mongodb://${conf.host}:${conf.port}/${conf.dbName}"""
@@ -77,6 +85,14 @@ case class CalDB(conf: CalConf) extends APICal {
 			for {
 				collection <- collectionCalendrier
 				result <- collection.find(JsObject(Seq("idCalendrier" -> JsString(idCalendar)))).one[Calendrier]
+			} yield result
+		
+		override def byStatus(status: String): Future[Seq[Calendrier]] =
+			for {
+				collection <- collectionCalendrier
+				result <- collection.find(JsObject(Seq("status" -> JsString(status))))
+					.cursor[Calendrier]()
+					.collect[Seq]()
 			} yield result
 	}
 	
@@ -187,6 +203,55 @@ case class CalDB(conf: CalConf) extends APICal {
 					.cursor[FrontModulePrerequis]()
 					.collect[Seq]()
 			} yield result
+		
+		override def update(frontModulePrerequis: FrontModulePrerequis): Future[WriteResult] =
+			for {
+				collection <- collectionModulePrerequis
+				update <- collection.update(JsObject(Seq("idModulePrerequis" -> JsString(frontModulePrerequis.idModulePrerequis))), frontModulePrerequis)
+			} yield update
+		
+		override def byFormationAndModule(codeFormation: String, idModule: Int): Future[Option[FrontModulePrerequis]] =
+			for {
+				collection <- collectionModulePrerequis
+				result <- collection.find(JsObject(Seq("codeFormation" -> JsString(codeFormation), "idModule" -> JsNumber(idModule)))).one[FrontModulePrerequis]
+			} yield result
+	}
+	
+	val StagiaireCoursCollection = new StagiaireCoursCollection {
+		private def collectionStagiaireCours: Future[JSONCollection] =
+			defaultDB
+				.map(_.collection[JSONCollection]("stagiaireCours"))
+				.recover {
+					case e: Exception =>
+						throw new RuntimeException("db not reachable")
+				}
+		
+		override def byId(id: String): Future[Option[StagiaireCours]] =
+			for {
+				collection <- collectionStagiaireCours
+				result <- collection.find(JsObject(Seq("idCours" -> JsString(id)))).one[StagiaireCours]
+			} yield result
+		
+		override def create(stagiaireCours: StagiaireCours): Future[WriteResult] =
+			for {
+				collection <- collectionStagiaireCours
+				created <- collection.insert[StagiaireCours](stagiaireCours)
+			} yield created
+		
+		override def all: Future[Seq[StagiaireCours]] =
+			for {
+				collection <- collectionStagiaireCours
+				result <- collection
+					.find[JsObject](JsObject(Seq.empty[(String, JsValue)]))
+					.cursor[StagiaireCours]()
+					.collect[Seq]()
+			} yield result
+		
+		override def update(stagiaireCours: StagiaireCours): Future[WriteResult] =
+			for {
+				collection <- collectionStagiaireCours
+				update <- collection.update(JsObject(Seq("idCours" -> JsString(stagiaireCours.idCours))), stagiaireCours)
+			} yield update
 	}
 	
 	val ModulePrerequisPlanningCollection = new ModulePrerequisPlanningCollection {

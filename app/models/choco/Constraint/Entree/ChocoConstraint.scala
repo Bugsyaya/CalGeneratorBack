@@ -15,5 +15,7 @@ case class ChocoConstraint(
 	                          listStudentRequired: Option[Seq[ChocoConstraintPriorityStudent]] = None,
 	                          listPeriodeOfTrainingExclusion: Option[Seq[ChocoConstraintPriorityPeriod]] = None,
 	                          listPeriodeOfTrainingInclusion: Option[Seq[ChocoConstraintPriorityPeriod]] = None,
-	                          prerequisModule: Option[ChocoConstraintPriorityBoolean] = None
+	                          prerequisModule: Option[ChocoConstraintPriorityBoolean] = None,
+	                          titre: Option[String] = None,
+	                          description: Option[String] = None
                           )

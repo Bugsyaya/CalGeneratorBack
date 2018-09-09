@@ -981,7 +981,7 @@ Création de prerequis pour un module.
 | POST    | /modulesPrerequis   | idModulePrerequis: String          | Non       |               |
 |         |                     | idModule: Int                      | Non       |               |
 |         |                     | idModuleObligatoire: Seq[Int]      | Oui       | Liste vide    |
-|         |                     | idModuleOpionnel: Seq[Int]         | Oui       | Liste vide    |
+|         |                     | idModuleOptionnel: Seq[Int]         | Oui       | Liste vide    |
 |         |                     | titre: String                      | Non       |               |
 |         |                     | description: String                | Non       |               |
 
@@ -995,7 +995,7 @@ Exemple d'entrée : POST https://myServer/modulesPrerequis
     	735,
     	738
     	],
-    "idModuleOpionnel": [
+    "idModuleOptionnel": [
     	739
     	],
     "titre": "Titre pour le module 731",

@@ -10,5 +10,6 @@ case class FrontModulePrerequisPlanning(
 	                                       idModulePrerequisPlanning: String,
 	                                       idModulePrerequis: Seq[String] = Seq.empty,
 	                                       titre: String,
-	                                       description: String
+	                                       description: String,
+	                                       codeFormation: Option[String] = None
                                        )

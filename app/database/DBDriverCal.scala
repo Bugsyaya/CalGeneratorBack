@@ -3,7 +3,7 @@ package database
 import models.Front.{FrontModulePrerequis, FrontModulePrerequisPlanning, FrontProblem}
 import models.choco.ChocoModule
 import models.choco.Constraint.Entree.ChocoConstraint
-import models.database.{Constraint, ConstraintModule}
+import models.database.{Constraint, ConstraintModule, StagiaireCours}
 import models.{Calendrier, ModuleFormation}
 import reactivemongo.api.commands.WriteResult
 
@@ -17,6 +17,8 @@ trait CalendrierCollection {
 	def update(calendrier: Calendrier): Future[WriteResult]
 	
 	def byId(idCalendar: String): Future[Option[Calendrier]]
+	
+	def byStatus(status: String): Future[Seq[Calendrier]]
 }
 
 trait ModuleFormationCollection {
@@ -57,6 +59,20 @@ trait ModulePrerequisCollection {
 	def create(frontModulePrerequis: FrontModulePrerequis): Future[WriteResult]
 	
 	def all: Future[Seq[FrontModulePrerequis]]
+	
+	def update(frontModulePrerequis: FrontModulePrerequis): Future[WriteResult]
+	
+	def byFormationAndModule(codeFormation: String, idModule: Int): Future[Option[FrontModulePrerequis]]
+}
+
+trait StagiaireCoursCollection {
+	def byId(id: String): Future[Option[StagiaireCours]]
+	
+	def create(stagiaireCours: StagiaireCours): Future[WriteResult]
+	
+	def all: Future[Seq[StagiaireCours]]
+	
+	def update(stagiaireCours: StagiaireCours): Future[WriteResult]
 }
 
 trait ModulePrerequisPlanningCollection {
@@ -102,6 +118,8 @@ trait APICal {
 	val ChocoConstraintCollection: ChocoConstraintCollection
 	
 	val ConstraintCollection: ConstraintCollection
+	
+	val StagiaireCoursCollection: StagiaireCoursCollection
 	
 	//	val ForChocModule: ForChocoModule
 	

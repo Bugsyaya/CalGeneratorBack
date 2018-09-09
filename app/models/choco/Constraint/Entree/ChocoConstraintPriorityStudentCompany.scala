@@ -1,5 +1,7 @@
 package models.choco.Constraint.Entree
 
+import java.util.UUID
+
 import play.api.libs.json.{Json, OFormat}
 
 object ChocoConstraintPriorityStudentCompany {
@@ -8,7 +10,7 @@ object ChocoConstraintPriorityStudentCompany {
 
 case class ChocoConstraintPriorityStudentCompany(
 	                                                priority: Option[Int] = Some(-1),
-	                                                value: ChocoConstraintStudentCompany,
-	                                                id: String,
+	                                                value: Seq[ChocoConstraintStudentCompany] = Seq.empty,
+	                                                id: Option[String] = Some(UUID.randomUUID().toString),
 	                                                message: Option[String] = None
                                                 )
