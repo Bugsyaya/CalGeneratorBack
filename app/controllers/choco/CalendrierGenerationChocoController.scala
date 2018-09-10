@@ -295,13 +295,15 @@ class CalendrierGenerationChocoController @Inject()(cc: ControllerComponents) ex
 					r2 <- Future.sequence(moduleWithoutPrerequis.map { mod =>
 						for {
 							listClasses <- db.CoursCollection.byDateAndModule(frontProblem.periodOfTraining.start, frontProblem.periodOfTraining.end, mod).flatMap { cours =>
-								Future.sequence(cours.map { c =>
+								Future.sequence(cours.to[scala.collection.immutable.Seq].map { c =>
 									db.CoursCollection.byId(c).filter(_.isDefined).map { rrr =>
 										createChocoClasses(rrr.get)
 									}
 								})
 							}
-							
+						
+							_ = println(s"listClasses : ${listClasses}")
+						
 							chocoModules <- db.ModuleCollection.byId(mod).filter(_.isDefined).map { r =>
 								ChocoModule(
 									idModule = r.get.idModule,
@@ -320,6 +322,8 @@ class CalendrierGenerationChocoController @Inject()(cc: ControllerComponents) ex
 				}
 			}.getOrElse(Future.successful(Seq.empty))
 			
+			_ = println(s"moduleOfTraining : ${moduleOfTraining}")
+		
 			chocoProbleme = ChocoProbleme(
 				periodOfTraining = frontProblem.periodOfTraining,
 				numberOfCalendarToFound = frontProblem.numberOfCalendarToFound,
