@@ -78,6 +78,7 @@ class CalendrierGenerationChocoController @Inject()(cc: ControllerComponents) ex
 	
 	def saveCalendrier: Action[AnyContent] = Action.async { request =>
 		request.body.asJson.map { requ =>
+			println(s"requ : $requ")
 			Json.fromJson[Calendrier](requ).map { req =>
 				dbMongo.CalendrierCollection.save(req.copy(status = "created")).flatMap { wr =>
 					if (wr.n > 0) {
@@ -227,7 +228,6 @@ class CalendrierGenerationChocoController @Inject()(cc: ControllerComponents) ex
 						moduleOfTraining = chocoModule
 					)
 					println(s"toJson[ChocoVerify](chocoVerif).toString : ${toJson[ChocoVerify](chocoVerif).toString}")
-					try {
 						Http().singleRequest(
 							HttpRequest(
 								method = HttpMethods.POST,
@@ -244,9 +244,6 @@ class CalendrierGenerationChocoController @Inject()(cc: ControllerComponents) ex
 								}
 							u.map(c => Seq(c.copy(periodOfTraining = calendrier.periodOfTraining)))
 						}
-					} catch {
-						case e: Exception => Future.successful(Seq.empty)
-					}
 					}.getOrElse(Future.successful(Seq.empty))
 				
 				
